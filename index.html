@@ -291,7 +291,7 @@
 </div>
 
 <script>
-const CORRECT_HASH = '8e5e027e5d3ce3c760c3b8ddb88cb1fd5d616b2b8f04b7b53b0b6ea84d1db5cf';
+const CORRECT_HASH = '934592ebd47a7c354e58aaef04fe7cd5e8c4bfcb4e10c7ed9378a1835dfe6343';
 const AUTH_KEY  = 'mc_auth';
 const TASKS_KEY = 'mc_tasks';
 const LOGS_KEY  = 'mc_logs';
@@ -345,14 +345,52 @@ const PHASES = [
 ];
 
 // ── Auth ──────────────────────────────────────────────────────────────────
-async function sha256(msg) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+// Pure-JS SHA-256 — works on file:// and https:// alike
+function sha256(str) {
+  function rr(v, a) { return (v >>> a) | (v << (32 - a)); }
+  const K = [], H = [];
+  for (let c = 2, p = 0; p < 64; c++) {
+    let ok = true;
+    for (let i = 2; i < c; i++) if (!(c % i)) { ok = false; break; }
+    if (ok) { H[p] = (Math.pow(c, 0.5) * 4294967296) | 0; K[p++] = (Math.pow(c, 1/3) * 4294967296) | 0; }
+  }
+  const bytes = new TextEncoder().encode(str);
+  const bits = bytes.length * 8;
+  const padLen = bytes.length + 1 + (((bytes.length + 9) % 64 === 0) ? 0 : 64 - ((bytes.length + 9) % 64)) + 8;
+  const msg = new Uint8Array(padLen);
+  msg.set(bytes);
+  msg[bytes.length] = 0x80;
+  const dv = new DataView(msg.buffer);
+  dv.setUint32(padLen - 4, bits >>> 0, false);
+  dv.setUint32(padLen - 8, Math.floor(bits / 4294967296), false);
+  const hash = H.slice();
+  for (let i = 0; i < msg.length; i += 64) {
+    const w = new Int32Array(64);
+    for (let j = 0; j < 16; j++) w[j] = dv.getInt32(i + j * 4, false);
+    for (let j = 16; j < 64; j++) {
+      const s0 = rr(w[j-15],7) ^ rr(w[j-15],18) ^ (w[j-15] >>> 3);
+      const s1 = rr(w[j-2],17) ^ rr(w[j-2],19) ^ (w[j-2] >>> 10);
+      w[j] = (w[j-16] + s0 + w[j-7] + s1) | 0;
+    }
+    let [a,b,c,d,e,f,g,h] = hash;
+    for (let j = 0; j < 64; j++) {
+      const S1 = rr(e,6) ^ rr(e,11) ^ rr(e,25);
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (h + S1 + ch + K[j] + w[j]) | 0;
+      const S0 = rr(a,2) ^ rr(a,13) ^ rr(a,22);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + maj) | 0;
+      h=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0;
+    }
+    hash[0]=(hash[0]+a)|0; hash[1]=(hash[1]+b)|0; hash[2]=(hash[2]+c)|0; hash[3]=(hash[3]+d)|0;
+    hash[4]=(hash[4]+e)|0; hash[5]=(hash[5]+f)|0; hash[6]=(hash[6]+g)|0; hash[7]=(hash[7]+h)|0;
+  }
+  return hash.map(v => (v >>> 0).toString(16).padStart(8, '0')).join('');
 }
 
-async function checkPassword() {
+function checkPassword() {
   const pw = document.getElementById('gate-pw').value;
-  const hash = await sha256(pw);
+  const hash = sha256(pw);
   if (hash === CORRECT_HASH) {
     localStorage.setItem(AUTH_KEY, '1');
     showDashboard();
