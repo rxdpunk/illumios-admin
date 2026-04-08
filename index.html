@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Illumios Mission Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0D1B4B;
+      --navy-dark: #070E27;
+      --orange: #F26522;
+      --cream: #FAF7F2;
+      --navy-mid: #111f54;
+      --navy-light: #1a2d6b;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --text-muted: rgba(250,247,242,0.55);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--navy-dark);
+      color: var(--cream);
+      min-height: 100vh;
+    }
+    /* GATE */
+    #gate {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: var(--navy-dark);
+    }
+    #gate-box {
+      background: var(--navy); border: 1px solid rgba(242,101,34,0.25);
+      border-radius: 16px; padding: 48px 40px; width: 360px; text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    #gate-box .logo-wrap { margin-bottom: 28px; }
+    #gate-box h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 24px; letter-spacing: 0.04em; text-transform: uppercase; }
+    #gate-box input[type="password"] {
+      width: 100%; padding: 12px 16px; background: var(--navy-dark);
+      border: 1px solid rgba(250,247,242,0.15); border-radius: 8px; color: var(--cream);
+      font-family: 'Nunito', sans-serif; font-size: 1rem; outline: none; margin-bottom: 12px; transition: border-color 0.2s;
+    }
+    #gate-box input[type="password"]:focus { border-color: var(--orange); }
+    #gate-btn {
+      width: 100%; padding: 12px; background: var(--orange); color: #fff; border: none;
+      border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    }
+    #gate-btn:hover { opacity: 0.88; }
+    #gate-error { color: #ef4444; font-size: 0.85rem; margin-top: 10px; min-height: 1.2em; }
+    /* DASHBOARD */
+    #dashboard { display: none; }
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100; background: var(--navy);
+      border-bottom: 1px solid rgba(250,247,242,0.08); display: flex; align-items: center;
+      justify-content: space-between; padding: 0 28px; height: 60px; box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+    }
+    .nav-left { display: flex; align-items: center; gap: 16px; }
+    .date-chip {
+      background: rgba(250,247,242,0.07); border: 1px solid rgba(250,247,242,0.12);
+      border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; font-weight: 600;
+      color: var(--text-muted); letter-spacing: 0.03em;
+    }
+    #sign-out-btn {
+      background: transparent; border: 1px solid rgba(242,101,34,0.4); color: var(--orange);
+      border-radius: 8px; padding: 6px 16px; font-family: 'Nunito', sans-serif;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    #sign-out-btn:hover { background: rgba(242,101,34,0.12); border-color: var(--orange); }
+    /* STATUS BAR */
+    .status-bar {
+      background: var(--navy-mid); border-bottom: 1px solid rgba(250,247,242,0.06);
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+    }
+    .status-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 8px; border-right: 1px solid rgba(250,247,242,0.06); text-align: center;
+    }
+    .status-item:last-child { border-right: none; }
+    .status-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 4px; }
+    .status-value { font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+    .dot-orange { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+    /* MAIN */
+    .main {
+      max-width: 1200px; margin: 0 auto; padding: 32px 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .card {
+      background: var(--navy); border: 1px solid rgba(250,247,242,0.08);
+      border-radius: 14px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    }
+    .card-full { grid-column: 1 / -1; }
+    .card-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 18px; }
+    /* QUICK LINKS */
+    .links-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .link-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; padding: 16px 8px; background: var(--navy-light);
+      border: 1px solid rgba(250,247,242,0.08); border-radius: 10px; color: var(--cream);
+      text-decoration: none; font-size: 0.75rem; font-weight: 700; text-align: center;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    }
+    .link-btn:hover { border-color: var(--orange); background: rgba(242,101,34,0.08); transform: translateY(-1px); }
+    /* PHASES */
+    .phases-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .phase-card { background: var(--navy-light); border: 1px solid rgba(250,247,242,0.08); border-radius: 10px; padding: 16px; }
+    .phase-card.active-phase { border-color: var(--orange); }
+    .phase-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .phase-name { font-size: 0.8rem; font-weight: 800; }
+    .phase-badge { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 20px; }
+    .badge-active { background: rgba(242,101,34,0.2); color: var(--orange); border: 1px solid rgba(242,101,34,0.4); }
+    .badge-upcoming { background: rgba(250,247,242,0.06); color: var(--text-muted); border: 1px solid rgba(250,247,242,0.1); }
+    .phase-dates { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px; }
+    .progress-bar-wrap { height: 4px; background: rgba(250,247,242,0.1); border-radius: 4px; margin-bottom: 12px; }
+    .progress-bar-fill { height: 100%; border-radius: 4px; background: var(--orange); transition: width 0.3s; }
+    .task-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .task-item { display: flex; align-items: flex-start; gap: 8px; }
+    .task-item input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; width: 14px; height: 14px; accent-color: var(--orange); cursor: pointer; }
+    .task-item label { font-size: 0.78rem; line-height: 1.4; cursor: pointer; }
+    .task-item.done label { text-decoration: line-through; color: var(--text-muted); }
+    /* LOG */
+    .log-textarea {
+      width: 100%; background: var(--navy-dark); border: 1px solid rgba(250,247,242,0.12);
+      border-radius: 8px; color: var(--cream); font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem; line-height: 1.6; padding: 12px 14px; resize: vertical;
+      min-height: 100px; outline: none; transition: border-color 0.2s;
+    }
+    .log-textarea:focus { border-color: var(--orange); }
+    .log-actions { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .save-btn {
+      background: var(--orange); color: #fff; border: none; border-radius: 8px;
+      padding: 8px 20px; font-family: 'Nunito', sans-serif; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    }
+    .save-btn:hover { opacity: 0.85; }
+    .autosave-indicator { font-size: 0.75rem; color: var(--text-muted); }
+    .log-history { margin-top: 20px; }
+    .log-history-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+    .log-entry { background: var(--navy-light); border: 1px solid rgba(250,247,242,0.06); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+    .log-entry-date { font-size: 0.7rem; font-weight: 700; color: var(--orange); margin-bottom: 4px; }
+    .log-entry-text { font-size: 0.82rem; line-height: 1.5; white-space: pre-wrap; }
+    @media (max-width: 900px) {
+      .status-bar { grid-template-columns: repeat(3, 1fr); }
+      .main { grid-template-columns: 1fr; }
+      .links-grid { grid-template-columns: repeat(3, 1fr); }
+      .phases-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .links-grid { grid-template-columns: repeat(2, 1fr); }
+      .phases-grid { grid-template-columns: 1fr; }
+      .status-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div id="gate-box">
+    <div class="logo-wrap">
+      <svg width="180" height="36" viewBox="0 0 220 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="28" font-family="Nunito, sans-serif" font-weight="800" font-size="28" fill="#FAF7F2">illumios</text>
+        <polygon points="200,4 210,14 200,24 190,14" fill="#F26522"/>
+        <polygon points="200,8 207,14 200,20 193,14" fill="#FAF7F2" opacity="0.9"/>
+      </svg>
+    </div>
+    <h2>Mission Control</h2>
+    <input type="password" id="gate-pw" placeholder="Enter password" autocomplete="current-password" />
+    <button id="gate-btn" onclick="checkPassword()">Unlock</button>
+    <div id="gate-error" role="alert"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <nav>
+    <div class="nav-left">
+      <svg width="160" height="32" viewBox="0 0 200 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="25" font-family="Nunito, sans-serif" font-weight="800" font-size="24" fill="#FAF7F2">illumios</text>
+        <polygon points="180,2 190,12 180,22 170,12" fill="#F26522"/>
+        <polygon points="180,6 187,12 180,18 173,12" fill="#FAF7F2" opacity="0.85"/>
+      </svg>
+      <span class="date-chip" id="nav-date"></span>
+    </div>
+    <button id="sign-out-btn" onclick="signOut()">Sign Out</button>
+  </nav>
+
+  <div class="status-bar">
+    <div class="status-item">
+      <div class="status-label">Website</div>
+      <div class="status-value"><span class="dot dot-green"></span>Live</div>
+    </div>
+    <div class="status-item">
+      <div class="status-label">GHL Trial</div>
+      <div class="status-value"><span class="dot dot-yellow"></span><span id="ghl-countdown">—</span></div>
+    </div>
+    <div class="status-item">
+      <div class="status-label">Active Clients</div>
+      <div class="status-value">0</div>
+    </div>
+    <div class="status-item">
+      <div class="status-label">MRR</div>
+      <div class="status-value">$0</div>
+    </div>
+    <div class="status-item">
+      <div class="status-label">A2P Brand</div>
+      <div class="status-value"><span class="dot dot-yellow"></span>Pending</div>
+    </div>
+    <div class="status-item">
+      <div class="status-label">Phase</div>
+      <div class="status-value"><span class="dot dot-orange"></span>1 – Foundation</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- GHL QUICK LINKS -->
+    <div class="card card-full">
+      <div class="card-title">GHL Quick Links</div>
+      <div class="links-grid">
+        <a class="link-btn" href="https://app.gohighlevel.com/contacts" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Contacts
+        </a>
+        <a class="link-btn" href="https://app.gohighlevel.com/conversations" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Conversations
+        </a>
+        <a class="link-btn" href="https://app.gohighlevel.com/calendars" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Calendars
+        </a>
+        <a class="link-btn" href="https://app.gohighlevel.com/opportunities" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Pipeline
+        </a>
+        <a class="link-btn" href="https://app.gohighlevel.com/automation" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          Workflows
+        </a>
+        <a class="link-btn" href="https://app.gohighlevel.com/reporting" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Reporting
+        </a>
+        <a class="link-btn" href="https://app.gohighlevel.com/settings" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </a>
+        <a class="link-btn" href="https://api.leadconnectorhq.com/widget/bookings/illumios-discovery-call" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          Booking Link
+        </a>
+        <a class="link-btn" href="https://illumios.com" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Website
+        </a>
+        <a class="link-btn" href="https://github.com/rxdpunk/illumios-website" target="_blank" rel="noopener noreferrer">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub Repo
+        </a>
+      </div>
+    </div>
+
+    <!-- 90-DAY PLAN -->
+    <div class="card card-full">
+      <div class="card-title">90-Day Launch Plan</div>
+      <div class="phases-grid" id="phases-grid"></div>
+    </div>
+
+    <!-- DAILY LOG -->
+    <div class="card card-full">
+      <div class="card-title">Daily Log</div>
+      <textarea class="log-textarea" id="log-textarea" placeholder="What did you work on today? What's blocked? What's next?"></textarea>
+      <div class="log-actions">
+        <button class="save-btn" onclick="saveLog(false)">Save Entry</button>
+        <span class="autosave-indicator" id="autosave-label" aria-live="polite"></span>
+      </div>
+      <div class="log-history">
+        <div class="log-history-title">Past 7 Days</div>
+        <div id="log-entries"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CORRECT_HASH = '8e5e027e5d3ce3c760c3b8ddb88cb1fd5d616b2b8f04b7b53b0b6ea84d1db5cf';
+const AUTH_KEY  = 'mc_auth';
+const TASKS_KEY = 'mc_tasks';
+const LOGS_KEY  = 'mc_logs';
+const GHL_END   = new Date('2026-04-16T23:59:59');
+
+const PHASES = [
+  {
+    name: 'Phase 1', subtitle: 'Foundation', dates: 'Apr 5 – Apr 19', active: true,
+    tasks: [
+      'Domain & hosting live (illumios.com)',
+      'GHL sub-account configured',
+      'Discovery call booking link live',
+      'A2P 10DLC brand submitted',
+      'Brand guide & logo finalized',
+      'First outreach batch sent (20 contacts)',
+    ],
+  },
+  {
+    name: 'Phase 2', subtitle: 'First Clients', dates: 'Apr 20 – May 10', active: false,
+    tasks: [
+      'Close first paying client',
+      'Onboarding workflow automated',
+      'GHL snapshot for client delivery',
+      'Google Business Profile optimized',
+      'Case study / testimonial request flow',
+      'Referral ask scripted',
+    ],
+  },
+  {
+    name: 'Phase 3', subtitle: 'Scale Systems', dates: 'May 11 – Jun 1', active: false,
+    tasks: [
+      '3+ active clients',
+      'Retainer pricing formalized',
+      'Monthly reporting template live',
+      'SOPs documented for all services',
+      'Hire or partner for overflow',
+      'Email nurture sequence built',
+    ],
+  },
+  {
+    name: 'Phase 4', subtitle: 'Growth & Proof', dates: 'Jun 2 – Jul 4', active: false,
+    tasks: [
+      'MRR target: $3,000+',
+      'Client results documented (ROI)',
+      'Case studies published on site',
+      'Referral program launched',
+      'Q3 roadmap planned',
+      'Paid ads test campaign',
+    ],
+  },
+];
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkPassword() {
+  const pw = document.getElementById('gate-pw').value;
+  const hash = await sha256(pw);
+  if (hash === CORRECT_HASH) {
+    localStorage.setItem(AUTH_KEY, '1');
+    showDashboard();
+  } else {
+    document.getElementById('gate-error').textContent = 'Incorrect password.';
+  }
+}
+
+function signOut() {
+  localStorage.removeItem(AUTH_KEY);
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('gate-pw').value = '';
+  document.getElementById('gate-error').textContent = '';
+}
+
+document.getElementById('gate-pw').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem(AUTH_KEY) === '1') showDashboard();
+});
+
+function showDashboard() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  initNav();
+  initStatusBar();
+  initPhases();
+  initLog();
+}
+
+// ── Nav ───────────────────────────────────────────────────────────────────
+function initNav() {
+  document.getElementById('nav-date').textContent =
+    new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// ── Status ────────────────────────────────────────────────────────────────
+function initStatusBar() {
+  const days = Math.max(0, Math.ceil((GHL_END - new Date()) / 86400000));
+  document.getElementById('ghl-countdown').textContent = days + 'd left';
+}
+
+// ── Phases ────────────────────────────────────────────────────────────────
+function getSavedTasks() {
+  try { return JSON.parse(localStorage.getItem(TASKS_KEY)) || {}; } catch { return {}; }
+}
+
+function computePct(phaseIdx, saved) {
+  const total = PHASES[phaseIdx].tasks.length;
+  if (!total) return 0;
+  const done = PHASES[phaseIdx].tasks.filter((_, ti) => saved[phaseIdx + '-' + ti]).length;
+  return Math.round((done / total) * 100);
+}
+
+function updateProgressBar(phaseIdx) {
+  const bar = document.getElementById('progress-' + phaseIdx);
+  if (bar) bar.style.width = computePct(phaseIdx, getSavedTasks()) + '%';
+}
+
+function handleTask(phaseIdx, taskIdx, checked) {
+  const saved = getSavedTasks();
+  saved[phaseIdx + '-' + taskIdx] = checked;
+  localStorage.setItem(TASKS_KEY, JSON.stringify(saved));
+  const item = document.getElementById('task-item-' + phaseIdx + '-' + taskIdx);
+  if (item) checked ? item.classList.add('done') : item.classList.remove('done');
+  updateProgressBar(phaseIdx);
+}
+
+function initPhases() {
+  const saved = getSavedTasks();
+  const grid = document.getElementById('phases-grid');
+  grid.textContent = '';
+
+  PHASES.forEach((phase, pi) => {
+    const card = document.createElement('div');
+    card.className = 'phase-card' + (phase.active ? ' active-phase' : '');
+
+    // Header row
+    const header = document.createElement('div');
+    header.className = 'phase-header';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'phase-name';
+    nameEl.textContent = phase.name + ': ' + phase.subtitle;
+
+    const badge = document.createElement('span');
+    badge.className = 'phase-badge ' + (phase.active ? 'badge-active' : 'badge-upcoming');
+    badge.textContent = phase.active ? 'ACTIVE' : 'UPCOMING';
+
+    header.appendChild(nameEl);
+    header.appendChild(badge);
+
+    // Dates
+    const dates = document.createElement('div');
+    dates.className = 'phase-dates';
+    dates.textContent = phase.dates;
+
+    // Progress bar
+    const barWrap = document.createElement('div');
+    barWrap.className = 'progress-bar-wrap';
+    const barFill = document.createElement('div');
+    barFill.className = 'progress-bar-fill';
+    barFill.id = 'progress-' + pi;
+    barFill.style.width = computePct(pi, saved) + '%';
+    barWrap.appendChild(barFill);
+
+    // Task list
+    const ul = document.createElement('ul');
+    ul.className = 'task-list';
+
+    phase.tasks.forEach((task, ti) => {
+      const li = document.createElement('li');
+      li.className = 'task-item' + (saved[pi + '-' + ti] ? ' done' : '');
+      li.id = 'task-item-' + pi + '-' + ti;
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.id = 'task-' + pi + '-' + ti;
+      cb.checked = !!saved[pi + '-' + ti];
+      cb.addEventListener('change', () => handleTask(pi, ti, cb.checked));
+
+      const label = document.createElement('label');
+      label.htmlFor = 'task-' + pi + '-' + ti;
+      label.textContent = task;
+
+      li.appendChild(cb);
+      li.appendChild(label);
+      ul.appendChild(li);
+    });
+
+    card.appendChild(header);
+    card.appendChild(dates);
+    card.appendChild(barWrap);
+    card.appendChild(ul);
+    grid.appendChild(card);
+  });
+}
+
+// ── Daily Log ─────────────────────────────────────────────────────────────
+let autosaveTimer = null;
+
+function initLog() {
+  const logs = getLogs();
+  const key = todayKey();
+  if (logs[key]) document.getElementById('log-textarea').value = logs[key];
+
+  document.getElementById('log-textarea').addEventListener('input', () => {
+    clearTimeout(autosaveTimer);
+    document.getElementById('autosave-label').textContent = 'Unsaved changes…';
+    autosaveTimer = setTimeout(() => saveLog(true), 3000);
+  });
+  renderLogHistory();
+}
+
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
+function getLogs() {
+  try { return JSON.parse(localStorage.getItem(LOGS_KEY)) || {}; } catch { return {}; }
+}
+
+function saveLog(auto) {
+  const text = document.getElementById('log-textarea').value.trim();
+  if (!text) {
+    document.getElementById('autosave-label').textContent = 'Nothing to save.';
+    return;
+  }
+  const logs = getLogs();
+  logs[todayKey()] = text;
+  localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+  const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  document.getElementById('autosave-label').textContent = (auto ? 'Auto-saved' : 'Saved!') + ' ' + time;
+  renderLogHistory();
+}
+
+function renderLogHistory() {
+  const logs = getLogs();
+  const today = todayKey();
+  const container = document.getElementById('log-entries');
+  container.textContent = '';
+
+  const keys = Object.keys(logs)
+    .filter(k => k !== today)
+    .sort((a, b) => b.localeCompare(a))
+    .slice(0, 7);
+
+  if (!keys.length) {
+    const p = document.createElement('p');
+    p.style.cssText = 'color:var(--text-muted);font-size:0.8rem';
+    p.textContent = 'No previous entries yet.';
+    container.appendChild(p);
+    return;
+  }
+
+  keys.forEach(key => {
+    const d = new Date(key + 'T12:00:00');
+    const label = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+
+    const dateEl = document.createElement('div');
+    dateEl.className = 'log-entry-date';
+    dateEl.textContent = label;
+
+    const textEl = document.createElement('div');
+    textEl.className = 'log-entry-text';
+    textEl.textContent = logs[key]; // textContent is safe — no XSS risk
+
+    entry.appendChild(dateEl);
+    entry.appendChild(textEl);
+    container.appendChild(entry);
+  });
+}
+</script>
+</body>
+</html>
