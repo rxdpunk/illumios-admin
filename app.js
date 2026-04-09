@@ -40,8 +40,8 @@ function formatDate(d) {
 }
 
 function startApp(auth) {
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('app').style.display = '';
+  document.getElementById('gate').hidden = true;
+  document.getElementById('app').hidden = false;
 
   const chip = document.getElementById('user-chip');
   if (chip) chip.textContent = auth.email || '';
@@ -64,9 +64,9 @@ function startApp(auth) {
 }
 
 function showGate() {
-  document.getElementById('app').style.display = 'none';
+  document.getElementById('app').hidden = true;
   const gate = document.getElementById('gate');
-  gate.style.display = '';
+  gate.hidden = false;
 
   window.handleCredentialResponse = (resp) => {
     const payload = decodeJwt(resp.credential);
