@@ -1074,3 +1074,20 @@ body::before {
 }
 .plan-notes-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--orange); margin-bottom: 6px; }
 .plan-notes-text { font-size: 0.8rem; line-height: 1.7; color: var(--muted); white-space: pre-wrap; }
+
+/* ── Progress bar (shared across Plan, Settings, Home widget) ─────────── */
+.phase-progress {
+  height: 6px;
+  background: var(--muted-light);
+  border-radius: 99px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.phase-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), #ff8c42);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
