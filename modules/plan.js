@@ -97,17 +97,64 @@ export default {
       const active = PHASES.find(p => p.active) || PHASES[0];
       const pi     = PHASES.indexOf(active);
       const pct    = computePct(pi, saved);
-      const done   = PHASES[pi].tasks.filter((_, ti) => saved[pi + '-' + ti]).length;
-      el.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;height:100%">
-          <div>
-            <div style="font-family:var(--font-brand);font-weight:800;font-size:0.95rem">${esc(active.name)} — ${esc(active.subtitle)}</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px">${esc(active.dates)}</div>
-          </div>
-          <div class="phase-progress"><div class="phase-progress-bar" style="width:${pct}%"></div></div>
-          <div style="font-size:0.8rem;color:var(--muted)">${done} of ${PHASES[pi].tasks.length} tasks complete · ${pct}%</div>
-          <a href="#/plan" class="link-btn" style="margin-top:auto">View Full Plan →</a>
-        </div>`;
+      const tasks  = PHASES[pi].tasks;
+      const done   = tasks.filter((_, ti) => saved[pi + '-' + ti]).length;
+
+      const outer = document.createElement('div');
+      outer.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding:4px 0;height:100%';
+
+      const header = document.createElement('div');
+      const name = document.createElement('div');
+      name.style.cssText = 'font-family:var(--font-brand);font-weight:800;font-size:0.95rem';
+      name.textContent = `${active.name} — ${active.subtitle}`;
+      const dates = document.createElement('div');
+      dates.style.cssText = 'font-size:0.78rem;color:var(--muted);margin-top:2px';
+      dates.textContent = active.dates;
+      header.append(name, dates);
+
+      const bar = document.createElement('div');
+      bar.className = 'phase-progress';
+      const fill = document.createElement('div');
+      fill.className = 'phase-progress-bar';
+      fill.style.width = pct + '%';
+      bar.appendChild(fill);
+
+      const count = document.createElement('div');
+      count.style.cssText = 'font-size:0.8rem;color:var(--muted)';
+      count.textContent = `${done} of ${tasks.length} tasks · ${pct}%`;
+
+      // Show remaining tasks (up to 5)
+      const remaining = tasks.filter((_, ti) => !saved[pi + '-' + ti]).slice(0, 5);
+      const list = document.createElement('div');
+      list.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px';
+      for (const t of remaining) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:baseline;gap:6px;font-size:0.8rem;line-height:1.4';
+        const dot = document.createElement('span');
+        dot.style.cssText = 'color:var(--orange);flex-shrink:0';
+        dot.textContent = '·';
+        const txt = document.createElement('span');
+        txt.style.color = 'var(--cream)';
+        txt.textContent = t;
+        row.append(dot, txt);
+        list.appendChild(row);
+      }
+      if (tasks.length - done > 5) {
+        const more = document.createElement('div');
+        more.style.cssText = 'font-size:0.75rem;color:var(--muted)';
+        more.textContent = `+${tasks.length - done - 5} more`;
+        list.appendChild(more);
+      }
+
+      const link = document.createElement('a');
+      link.href = '#/plan';
+      link.className = 'link-btn';
+      link.style.marginTop = 'auto';
+      link.textContent = 'View Full Plan →';
+
+      outer.append(header, bar, count, list, link);
+      el.textContent = '';
+      el.appendChild(outer);
     },
   }],
 

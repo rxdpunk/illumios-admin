@@ -326,6 +326,13 @@ body::before {
 .widget-drag-handle:hover { color: var(--cream); }
 .customize-mode .widget-drag-handle { display: flex; }
 
+/* Whole header is the drag zone in customize mode */
+.customize-mode .widget-header { cursor: grab; }
+.customize-mode .widget-header:active { cursor: grabbing; }
+/* Buttons inside the header keep pointer cursor and sit above drag layer */
+.customize-mode .widget-header .size-btn,
+.customize-mode .widget-header .widget-remove-btn { cursor: pointer; position: relative; z-index: 10; }
+
 .widget-title {
   font-family: var(--font-brand);
   font-size: 0.75rem;

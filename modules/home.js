@@ -152,11 +152,36 @@ function refreshAddTray() {
         try   { await w.render(body, { userEmail: _email }); }
         catch (err) { body.textContent = '⚠ ' + err.message; }
       }
+      attachRemoveListeners();
       refreshAddTray();
       await saveLayout();
     });
     tray.appendChild(chip);
   }
+}
+
+// ── Remove-button listeners ───────────────────────────────────────────────
+// Must use direct listeners (not delegation) so we can stopPropagation on
+// mousedown before Gridstack's drag handler sees it.
+function attachRemoveListeners() {
+  const gs = document.getElementById('home-gs');
+  if (!gs) return;
+  gs.querySelectorAll('.widget-remove-btn').forEach(btn => {
+    if (btn._bound) return;
+    btn._bound = true;
+    btn.addEventListener('mousedown', e => e.stopPropagation());
+    btn.addEventListener('click', async (e) => {
+      if (!isCustomizing) return;
+      e.stopPropagation();
+      const wid    = btn.dataset.wid;
+      const gsItem = gs.querySelector(`[gs-id="${wid}"]`);
+      if (gsItem) {
+        grid.removeWidget(gsItem, false);
+        refreshAddTray();
+        await saveLayout();
+      }
+    });
+  });
 }
 
 // ── Customize toggle ──────────────────────────────────────────────────────
@@ -214,17 +239,18 @@ export default {
     const btn = document.getElementById('customize-btn');
     if (btn) btn.style.display = 'flex';
 
-    // Init Gridstack — static (locked) until Customize is clicked
+    // Init Gridstack — static (locked) until Customize is clicked.
+    // handle is the full widget-header so users can drag from the title bar;
+    // the dots icon is a visual affordance only.
     grid = GridStack.init({
       column:         12,
       cellHeight:     72,
       cellHeightUnit: 'px',
       margin:         10,
       marginUnit:     'px',
-      handle:         '.widget-drag-handle',
+      handle:         '.widget-header',
       staticGrid:     true,
       animate:        true,
-      resizable:      { handles: 'se,s,e' },
     }, '#home-gs');
 
     // Populate grid
@@ -256,28 +282,18 @@ export default {
       }
     }
 
-    // Event delegation: size presets + remove buttons (only active in customize mode)
+    // Bind remove buttons after all widgets are in the DOM
+    attachRemoveListeners();
+
+    // Event delegation for size preset buttons (quick, no Gridstack conflict)
     gs.addEventListener('click', async (e) => {
       if (!isCustomizing) return;
-
       const sizeBtn = e.target.closest('.size-btn');
       if (sizeBtn) {
         const wid    = sizeBtn.dataset.wid;
         const w      = parseInt(sizeBtn.dataset.w, 10);
         const gsItem = gs.querySelector(`[gs-id="${wid}"]`);
         if (gsItem) { grid.update(gsItem, { w }); await saveLayout(); }
-        return;
-      }
-
-      const removeBtn = e.target.closest('.widget-remove-btn');
-      if (removeBtn) {
-        const wid    = removeBtn.dataset.wid;
-        const gsItem = gs.querySelector(`[gs-id="${wid}"]`);
-        if (gsItem) {
-          grid.removeWidget(gsItem, false);
-          refreshAddTray();
-          await saveLayout();
-        }
       }
     });
 

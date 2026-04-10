@@ -41,14 +41,25 @@ export default {
     async render(el) {
       const entries = await getEntries();
       const text = entries[today()] || '';
-      el.innerHTML = `
-        <div style="display:flex;flex-direction:column;height:100%;gap:12px;padding:4px 0">
-          <div style="font-size:0.8rem;color:var(--muted)">${fmtShort(today())}</div>
-          <div style="font-size:0.87rem;line-height:1.65;flex:1;color:${text ? 'var(--cream)' : 'var(--muted)'}">
-            ${text ? esc(text.slice(0, 200)) + (text.length > 200 ? '…' : '') : 'No entry yet for today.'}
-          </div>
-          <a href="#/daily-log" class="link-btn">Open Log →</a>
-        </div>`;
+      const outer = document.createElement('div');
+      outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:10px;padding:4px 0';
+
+      const dateLbl = document.createElement('div');
+      dateLbl.style.cssText = 'font-size:0.78rem;color:var(--muted);font-weight:600';
+      dateLbl.textContent = fmtShort(today());
+
+      const preview = document.createElement('div');
+      preview.style.cssText = 'font-size:0.83rem;line-height:1.65;flex:1;overflow-y:auto;white-space:pre-wrap;word-break:break-word;color:' + (text ? 'var(--cream)' : 'var(--muted)');
+      preview.textContent = text ? text.slice(0, 500) + (text.length > 500 ? '…' : '') : 'No entry yet for today.';
+
+      const link = document.createElement('a');
+      link.href = '#/daily-log';
+      link.className = 'link-btn';
+      link.textContent = text ? 'Edit Log →' : 'Write Today\'s Log →';
+
+      outer.append(dateLbl, preview, link);
+      el.textContent = '';
+      el.appendChild(outer);
     },
   }],
 
