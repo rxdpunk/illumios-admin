@@ -4,15 +4,17 @@
 import * as registry from './registry.js';
 
 let currentModule = null;
-let viewEl = null;
-let pageTitleEl = null;
-let navEl = null;
-let defaultId = 'home';
+let viewEl        = null;
+let pageTitleEl   = null;
+let navEl         = null;
+let defaultId     = 'home';
+let userEmail     = '';
 
-export function init({ view, pageTitle, nav, defaultModule }) {
-  viewEl = view;
+export function init({ view, pageTitle, nav, defaultModule, userEmail: email }) {
+  viewEl      = view;
   pageTitleEl = pageTitle;
-  navEl = nav;
+  navEl       = nav;
+  userEmail   = email || '';
   if (defaultModule) defaultId = defaultModule;
 
   renderSidebar();
@@ -35,10 +37,10 @@ function renderSidebar() {
   navEl.textContent = '';
   for (const mod of registry.sidebarModules()) {
     const btn = document.createElement('a');
-    btn.className = 'nav-item';
-    btn.href = '#/' + mod.id;
+    btn.className  = 'nav-item';
+    btn.href       = '#/' + mod.id;
     btn.dataset.moduleId = mod.id;
-    btn.innerHTML = (mod.icon || '') + '<span>' + escapeHtml(mod.title) + '</span>';
+    btn.innerHTML  = (mod.icon || '') + '<span>' + escapeHtml(mod.title) + '</span>';
     navEl.appendChild(btn);
   }
   updateActiveNav();
@@ -66,19 +68,23 @@ async function render() {
   }
 
   // Clear view
-  viewEl.textContent = '';
+  viewEl.textContent   = '';
   pageTitleEl.textContent = mod.title;
   updateActiveNav();
 
+  // Context passed to every module — add userEmail so modules can namespace storage
+  const ctx = { navigate, userEmail };
+
   try {
-    await mod.mount(viewEl, { navigate });
+    await mod.mount(viewEl, ctx);
   } catch (err) {
     console.error('Module mount failed:', err);
-    viewEl.innerHTML = '<div class="empty"><h3>Something went wrong</h3><p>' + escapeHtml(String(err)) + '</p></div>';
+    viewEl.innerHTML = `<div class="empty"><h3>Something went wrong</h3><p>${escapeHtml(String(err))}</p></div>`;
   }
   currentModule = mod;
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return String(s).replace(/[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
