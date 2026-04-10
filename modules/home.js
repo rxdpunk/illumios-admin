@@ -7,9 +7,10 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 // Default widget layout — { id, x, y, w, h } on a 12-column grid
 const DEFAULT_LAYOUT = [
-  { id: 'plan-widget',         x: 0, y: 0, w: 4, h: 5 },
-  { id: 'daily-log-today',    x: 4, y: 0, w: 4, h: 5 },
-  { id: 'quick-links-widget', x: 8, y: 0, w: 4, h: 5 },
+  { id: 'tasks-today',        x: 0, y: 0, w: 6, h: 6 },
+  { id: 'plan-widget',        x: 6, y: 0, w: 6, h: 6 },
+  { id: 'daily-log-today',   x: 0, y: 6, w: 8, h: 5 },
+  { id: 'quick-links-widget', x: 8, y: 6, w: 4, h: 5 },
 ];
 
 const LAYOUT_PREFIX = 'home/layout/';

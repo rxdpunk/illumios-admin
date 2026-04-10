@@ -123,11 +123,96 @@ function renderBucket(name, tasks) {
     </div>`;
 }
 
+// ── Home widget ────────────────────────────────────────────────────────────
+async function renderTodayWidget(el) {
+  const tasks = await load();
+  const todayItems = tasks.filter(t => !t.done && t.bucket === 'Today');
+  const weekCount  = tasks.filter(t => !t.done && t.bucket === 'This Week').length;
+
+  const rows = todayItems.map(t => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;align-items:flex-start;gap:8px';
+
+    const label = document.createElement('label');
+    label.className = 'task-check-wrap';
+    label.style.cssText = 'margin-top:1px;flex-shrink:0';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'task-cb task-widget-cb';
+    cb.dataset.id = t.id;
+
+    const checkmark = document.createElement('span');
+    checkmark.className = 'task-checkmark';
+    label.append(cb, checkmark);
+
+    const text = document.createElement('span');
+    text.style.cssText = 'font-size:0.85rem;line-height:1.45;color:var(--cream)';
+    text.textContent = t.text;
+
+    wrap.append(label, text);
+    return wrap;
+  });
+
+  el.textContent = '';
+
+  const outer = document.createElement('div');
+  outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:8px;padding:4px 0';
+
+  const list = document.createElement('div');
+  list.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px';
+
+  if (rows.length) {
+    rows.forEach(r => list.appendChild(r));
+  } else {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'color:var(--muted);font-size:0.85rem;padding:4px 0';
+    empty.textContent = 'All clear for today.';
+    list.appendChild(empty);
+  }
+  outer.appendChild(list);
+
+  if (weekCount) {
+    const sub = document.createElement('div');
+    sub.style.cssText = 'font-size:0.75rem;color:var(--muted)';
+    sub.textContent = `${weekCount} task${weekCount !== 1 ? 's' : ''} coming up this week`;
+    outer.appendChild(sub);
+  }
+
+  const link = document.createElement('a');
+  link.href = '#/tasks';
+  link.className = 'link-btn';
+  link.style.marginTop = 'auto';
+  link.textContent = 'View All Tasks →';
+  outer.appendChild(link);
+
+  el.appendChild(outer);
+
+  el.querySelectorAll('.task-widget-cb').forEach(checkbox => {
+    checkbox.addEventListener('change', async () => {
+      const all = await load();
+      const found = all.find(t => t.id === checkbox.dataset.id);
+      if (found) { found.done = true; found.bucket = 'Done'; await save(all); }
+      renderTodayWidget(el);
+    });
+  });
+}
+
 export default {
   id: 'tasks',
   title: 'Tasks',
   icon: ICON,
   showInSidebar: true,
+
+  widgets: [{
+    id:       'tasks-today',
+    title:    "Today's Tasks",
+    minW:     3,
+    minH:     3,
+    defaultW: 6,
+    defaultH: 6,
+    render:   renderTodayWidget,
+  }],
 
   async mount(el) {
     let tasks = await load();
