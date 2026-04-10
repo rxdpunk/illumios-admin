@@ -342,6 +342,93 @@ body::before {
   padding: 18px;
 }
 
+/* ── Widget size presets (visible in customize mode only) ─────────────── */
+.widget-size-presets {
+  display: none;
+  align-items: center;
+  gap: 3px;
+}
+.customize-mode .widget-size-presets { display: flex; }
+
+.size-btn {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+}
+.size-btn:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+
+/* ── Widget remove button (visible in customize mode only) ────────────── */
+.widget-remove-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+.customize-mode .widget-remove-btn { display: flex; }
+.widget-remove-btn:hover { border-color: var(--red); color: var(--red); background: rgba(248,113,113,0.1); }
+
+/* ── Add-widget tray ─────────────────────────────────────────────────── */
+.widget-add-tray {
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  margin-top: 8px;
+  background: var(--bg-card);
+  border: 1px dashed rgba(96,165,250,0.35);
+  border-radius: var(--radius);
+}
+
+.widget-tray-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.widget-tray-empty {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.widget-chip {
+  background: transparent;
+  border: 1px solid rgba(96,165,250,0.4);
+  border-radius: 20px;
+  color: var(--blue);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 4px 14px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font-ui);
+  white-space: nowrap;
+}
+.widget-chip:hover { background: rgba(96,165,250,0.12); border-color: var(--blue); }
+
 /* ── Status Bar ──────────────────────────────────────────── */
 .status-bar, .status-grid {
   display: grid;

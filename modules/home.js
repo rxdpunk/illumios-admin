@@ -5,72 +5,70 @@ import { storage }   from '../core/storage.js';
 
 const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
 
+// Preset column widths (out of 12)
+const SIZE_PRESETS = [
+  { label: 'S',  w: 3 },
+  { label: 'M',  w: 4 },
+  { label: 'L',  w: 6 },
+  { label: 'XL', w: 8 },
+  { label: '↔',  w: 12 },
+];
+
 // Default widget layout — { id, x, y, w, h } on a 12-column grid
 const DEFAULT_LAYOUT = [
   { id: 'tasks-today',        x: 0, y: 0, w: 6, h: 6 },
   { id: 'plan-widget',        x: 6, y: 0, w: 6, h: 6 },
-  { id: 'daily-log-today',   x: 0, y: 6, w: 8, h: 5 },
+  { id: 'daily-log-today',    x: 0, y: 6, w: 8, h: 5 },
   { id: 'quick-links-widget', x: 8, y: 6, w: 4, h: 5 },
 ];
 
 const LAYOUT_PREFIX = 'home/layout/';
 
 // ── Status bar ────────────────────────────────────────────────────────────
-function renderStatusBar() {
-  const today = new Date();
+function buildStatusBar() {
+  const today     = new Date();
   const phase1End = new Date('2026-04-19');
   const daysLeft  = Math.max(0, Math.ceil((phase1End - today) / 86400000));
 
   const items = [
-    { label: 'Website',    dot: 'green',  val: 'Live' },
-    { label: 'GHL',        dot: 'green',  val: 'Active' },
-    { label: 'Maya AI',    dot: 'green',  val: 'Live' },
-    { label: 'A2P Brand',  dot: 'green',  val: 'Approved' },
-    { label: 'A2P SMS',    dot: 'yellow', val: 'Carrier Pending' },
-    { label: 'Phase 1',    dot: daysLeft > 0 ? 'orange' : 'red',
-                           val: daysLeft > 0 ? `${daysLeft}d left` : 'Complete' },
+    { label: 'Website',   dot: 'green',  val: 'Live' },
+    { label: 'GHL',       dot: 'green',  val: 'Active' },
+    { label: 'Maya AI',   dot: 'green',  val: 'Live' },
+    { label: 'A2P Brand', dot: 'green',  val: 'Approved' },
+    { label: 'A2P SMS',   dot: 'yellow', val: 'Carrier Pending' },
+    {
+      label: 'Phase 1',
+      dot: daysLeft > 0 ? 'orange' : 'red',
+      val: daysLeft > 0 ? `${daysLeft}d left` : 'Complete',
+    },
   ];
 
-  return `<div class="status-bar">
-    ${items.map(s => `
-      <div class="status-item">
-        <div class="status-label">${s.label}</div>
-        <div class="status-value"><span class="dot dot-${s.dot}"></span>${s.val}</div>
-      </div>`).join('')}
-  </div>`;
-}
-
-// ── Module state ──────────────────────────────────────────────────────────
-let grid          = null;
-let isCustomizing = false;
-let _email        = '';
-let _customizeHandler = null;
-
-function layoutKey(email) { return LAYOUT_PREFIX + (email || 'default'); }
-
-async function saveLayout() {
-  if (!grid) return;
-  const items = grid.save(false); // false = don't save content HTML
-  await storage.set(layoutKey(_email), items);
-}
-
-function setCustomizing(el, on) {
-  isCustomizing = on;
-  const btn = document.getElementById('customize-btn');
-  if (on) {
-    grid.setStatic(false);  // unlock drag + resize
-    el.classList.add('customize-mode');
-    if (btn) { btn.textContent = 'Lock Layout'; btn.classList.add('active'); }
-  } else {
-    grid.setStatic(true);   // re-lock
-    el.classList.remove('customize-mode');
-    if (btn) { btn.textContent = 'Customize'; btn.classList.remove('active'); }
-    saveLayout();
+  const bar = document.createElement('div');
+  bar.className = 'status-bar';
+  for (const s of items) {
+    const item = document.createElement('div');
+    item.className = 'status-item';
+    const lbl = document.createElement('div');
+    lbl.className = 'status-label';
+    lbl.textContent = s.label;
+    const val = document.createElement('div');
+    val.className = 'status-value';
+    const dot = document.createElement('span');
+    dot.className = `dot dot-${s.dot}`;
+    val.appendChild(dot);
+    val.append(s.val);
+    item.append(lbl, val);
+    bar.appendChild(item);
   }
+  return bar;
 }
 
-// ── Widget card HTML ──────────────────────────────────────────────────────
+// ── Widget card — id/title are developer-defined constants, not user input ─
 function widgetCard(id, title) {
+  const presets = SIZE_PRESETS.map(p =>
+    `<button class="size-btn" data-w="${p.w}" data-wid="${id}">${p.label}</button>`
+  ).join('');
+
   return `
     <div class="widget-inner">
       <div class="widget-header">
@@ -82,9 +80,103 @@ function widgetCard(id, title) {
           </svg>
         </div>
         <div class="widget-title">${title}</div>
+        <div class="widget-size-presets">${presets}</div>
+        <button class="widget-remove-btn" data-wid="${id}" title="Remove widget">×</button>
       </div>
       <div class="widget-body" id="wb-${id}"></div>
     </div>`;
+}
+
+// ── Module state ──────────────────────────────────────────────────────────
+let grid             = null;
+let isCustomizing    = false;
+let _email           = '';
+let _el              = null;
+let _allWidgets      = [];
+let _byId            = new Map();
+let _customizeHandler = null;
+
+function layoutKey(email) { return LAYOUT_PREFIX + (email || 'default'); }
+
+async function saveLayout() {
+  if (!grid) return;
+  await storage.set(layoutKey(_email), grid.save(false));
+}
+
+function getPlacedIds() {
+  return new Set(
+    Array.from(document.querySelectorAll('#home-gs .grid-stack-item'))
+      .map(el => el.getAttribute('gs-id'))
+      .filter(Boolean)
+  );
+}
+
+// ── Add-widget tray ───────────────────────────────────────────────────────
+function refreshAddTray() {
+  const tray = document.getElementById('widget-add-tray');
+  if (!tray) return;
+
+  const placed    = getPlacedIds();
+  const available = _allWidgets.filter(w => !placed.has(w.id));
+
+  tray.textContent = '';
+
+  if (available.length === 0) {
+    const msg = document.createElement('span');
+    msg.className   = 'widget-tray-empty';
+    msg.textContent = 'All widgets are on the board';
+    tray.appendChild(msg);
+    return;
+  }
+
+  const label = document.createElement('span');
+  label.className   = 'widget-tray-label';
+  label.textContent = 'Add widget:';
+  tray.appendChild(label);
+
+  for (const w of available) {
+    const chip = document.createElement('button');
+    chip.className   = 'widget-chip';
+    chip.textContent = '+ ' + w.title;
+    chip.addEventListener('click', async () => {
+      grid.addWidget({
+        w:    w.defaultW ?? 4,
+        h:    w.defaultH ?? 5,
+        minW: w.minW ?? 2,
+        minH: w.minH ?? 3,
+        id:   w.id,
+        content: widgetCard(w.id, w.title),
+      });
+      const body = document.getElementById('wb-' + w.id);
+      if (body) {
+        try   { await w.render(body, { userEmail: _email }); }
+        catch (err) { body.textContent = '⚠ ' + err.message; }
+      }
+      refreshAddTray();
+      await saveLayout();
+    });
+    tray.appendChild(chip);
+  }
+}
+
+// ── Customize toggle ──────────────────────────────────────────────────────
+function setCustomizing(on) {
+  isCustomizing = on;
+  const btn  = document.getElementById('customize-btn');
+  const tray = document.getElementById('widget-add-tray');
+
+  if (on) {
+    grid.setStatic(false);
+    if (_el)  _el.classList.add('customize-mode');
+    if (btn)  { btn.textContent = 'Lock Layout'; btn.classList.add('active'); }
+    if (tray) { tray.style.display = 'flex'; refreshAddTray(); }
+  } else {
+    grid.setStatic(true);
+    if (_el)  _el.classList.remove('customize-mode');
+    if (btn)  { btn.textContent = 'Customize'; btn.classList.remove('active'); }
+    if (tray) tray.style.display = 'none';
+    saveLayout();
+  }
 }
 
 // ── Mount ─────────────────────────────────────────────────────────────────
@@ -95,81 +187,118 @@ export default {
   showInSidebar: true,
 
   async mount(el, ctx) {
-    _email = ctx?.userEmail || '';
+    _email      = ctx?.userEmail || '';
+    _el         = el;
+    _allWidgets = registry.allWidgets();
+    _byId       = new Map(_allWidgets.map(w => [w.id, w]));
 
-    // Collect all registered widgets
-    const widgets = registry.allWidgets();
-    const byId    = new Map(widgets.map(w => [w.id, w]));
-
-    // Load saved layout or fall back to default
     const saved  = await storage.get(layoutKey(_email), null);
     const layout = saved || DEFAULT_LAYOUT;
 
-    el.innerHTML = `
-      ${renderStatusBar()}
-      <div class="grid-stack" id="home-gs"></div>`;
+    // Build DOM shell
+    const gs   = document.createElement('div');
+    gs.className = 'grid-stack';
+    gs.id        = 'home-gs';
 
-    // Show the Customize button in the topbar
+    const tray = document.createElement('div');
+    tray.id           = 'widget-add-tray';
+    tray.className    = 'widget-add-tray';
+    tray.style.display = 'none';
+
+    el.textContent = '';
+    el.appendChild(buildStatusBar());
+    el.appendChild(gs);
+    el.appendChild(tray);
+
+    // Show Customize button in topbar
     const btn = document.getElementById('customize-btn');
     if (btn) btn.style.display = 'flex';
 
-    // Init Gridstack — disabled by default, Customize mode enables it
+    // Init Gridstack — static (locked) until Customize is clicked
     grid = GridStack.init({
-      column:            12,
-      cellHeight:        72,
-      cellHeightUnit:    'px',
-      margin:            10,
-      marginUnit:        'px',
-      handle:            '.widget-drag-handle',
-      staticGrid:        true,  // locked until Customize is clicked
-      animate:           true,
+      column:         12,
+      cellHeight:     72,
+      cellHeightUnit: 'px',
+      margin:         10,
+      marginUnit:     'px',
+      handle:         '.widget-drag-handle',
+      staticGrid:     true,
+      animate:        true,
+      resizable:      { handles: 'se,s,e' },
     }, '#home-gs');
 
-    // Add each widget to the grid
+    // Populate grid
     for (const item of layout) {
-      const w = byId.get(item.id);
+      const w = _byId.get(item.id);
       if (!w) continue;
       grid.addWidget({
-        x: item.x ?? 0,
-        y: item.y ?? 0,
-        w: item.w ?? (w.defaultW ?? 4),
-        h: item.h ?? (w.defaultH ?? 5),
+        x:    item.x ?? 0,
+        y:    item.y ?? 0,
+        w:    item.w ?? (w.defaultW ?? 4),
+        h:    item.h ?? (w.defaultH ?? 5),
         minW: w.minW ?? 2,
         minH: w.minH ?? 3,
-        id: item.id,
+        id:   item.id,
         content: widgetCard(item.id, w.title),
       });
     }
 
-    // Render widget content into each .widget-body
+    // Render widget bodies
     for (const item of layout) {
-      const w    = byId.get(item.id);
+      const w    = _byId.get(item.id);
       const body = document.getElementById('wb-' + item.id);
       if (!w || !body) continue;
       try {
         await w.render(body, ctx);
       } catch (err) {
-        body.innerHTML = `<p style="color:var(--red);font-size:0.8rem;padding:8px">⚠ ${err.message}</p>`;
+        body.textContent = '⚠ ' + err.message;
         console.error('Widget render error:', item.id, err);
       }
     }
 
-    // Customize toggle handler
-    _customizeHandler = () => setCustomizing(el, !isCustomizing);
+    // Event delegation: size presets + remove buttons (only active in customize mode)
+    gs.addEventListener('click', async (e) => {
+      if (!isCustomizing) return;
+
+      const sizeBtn = e.target.closest('.size-btn');
+      if (sizeBtn) {
+        const wid    = sizeBtn.dataset.wid;
+        const w      = parseInt(sizeBtn.dataset.w, 10);
+        const gsItem = gs.querySelector(`[gs-id="${wid}"]`);
+        if (gsItem) { grid.update(gsItem, { w }); await saveLayout(); }
+        return;
+      }
+
+      const removeBtn = e.target.closest('.widget-remove-btn');
+      if (removeBtn) {
+        const wid    = removeBtn.dataset.wid;
+        const gsItem = gs.querySelector(`[gs-id="${wid}"]`);
+        if (gsItem) {
+          grid.removeWidget(gsItem, false);
+          refreshAddTray();
+          await saveLayout();
+        }
+      }
+    });
+
+    // Auto-save on drag/resize
+    grid.on('change', () => { if (isCustomizing) saveLayout(); });
+
+    // Wire Customize button toggle
+    _customizeHandler = () => setCustomizing(!isCustomizing);
     document.addEventListener('mc:toggle-customize', _customizeHandler);
   },
 
   unmount() {
-    // Save layout before leaving
-    if (grid && isCustomizing) { setCustomizing(document.querySelector('#view') || document.body, false); }
-    if (grid) { try { grid.destroy(false); } catch(_) {} grid = null; }
+    if (grid && isCustomizing) setCustomizing(false);
+    if (grid) { try { grid.destroy(false); } catch (_) {} grid = null; }
     if (_customizeHandler) {
       document.removeEventListener('mc:toggle-customize', _customizeHandler);
       _customizeHandler = null;
     }
     isCustomizing = false;
+    _el = null;
 
-    // Hide & reset the Customize button
     const btn = document.getElementById('customize-btn');
     if (btn) {
       btn.style.display = 'none';
