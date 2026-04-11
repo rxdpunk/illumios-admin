@@ -41,23 +41,57 @@ export default {
     async render(el) {
       const entries = await getEntries();
       const text = entries[today()] || '';
-      const outer = document.createElement('div');
-      outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:10px;padding:4px 0';
 
+      const outer = document.createElement('div');
+      outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:8px;padding:4px 0';
+
+      // Header row: date + autosave status
+      const headerRow = document.createElement('div');
+      headerRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;flex-shrink:0';
       const dateLbl = document.createElement('div');
       dateLbl.style.cssText = 'font-size:0.78rem;color:var(--muted);font-weight:600';
       dateLbl.textContent = fmtShort(today());
+      const savedLbl = document.createElement('span');
+      savedLbl.style.cssText = 'font-size:0.72rem;color:var(--green);opacity:0;transition:opacity .3s';
+      savedLbl.textContent = '✓ Saved';
+      headerRow.append(dateLbl, savedLbl);
 
-      const preview = document.createElement('div');
-      preview.style.cssText = 'font-size:0.83rem;line-height:1.65;flex:1;overflow-y:auto;white-space:pre-wrap;word-break:break-word;color:' + (text ? 'var(--cream)' : 'var(--muted)');
-      preview.textContent = text ? text.slice(0, 500) + (text.length > 500 ? '…' : '') : 'No entry yet for today.';
+      // Inline textarea
+      const ta = document.createElement('textarea');
+      ta.style.cssText = [
+        'flex:1;min-height:0;background:transparent',
+        'border:1px solid var(--border);border-radius:6px',
+        'color:var(--cream);font-size:0.82rem;line-height:1.6',
+        'padding:8px 10px;resize:none;outline:none;font-family:inherit',
+        'transition:border-color .15s',
+      ].join(';');
+      ta.placeholder = 'What did you work on today?';
+      ta.value = text;
+      ta.addEventListener('focus', () => { ta.style.borderColor = 'var(--orange)'; });
+      ta.addEventListener('blur',  () => { ta.style.borderColor = 'var(--border)'; });
 
+      let widgetTimer = null;
+      ta.addEventListener('input', () => {
+        clearTimeout(widgetTimer);
+        widgetTimer = setTimeout(async () => {
+          const all = await getEntries();
+          all[today()] = ta.value;
+          await storage.set(KEY, all);
+          savedLbl.style.opacity = '1';
+          setTimeout(() => { savedLbl.style.opacity = '0'; }, 1500);
+        }, 1000);
+      });
+
+      // Footer: Full Log link
+      const footer = document.createElement('div');
+      footer.style.cssText = 'display:flex;justify-content:flex-end;flex-shrink:0';
       const link = document.createElement('a');
       link.href = '#/daily-log';
       link.className = 'link-btn';
-      link.textContent = text ? 'Edit Log →' : 'Write Today\'s Log →';
+      link.textContent = 'Full Log →';
+      footer.appendChild(link);
 
-      outer.append(dateLbl, preview, link);
+      outer.append(headerRow, ta, footer);
       el.textContent = '';
       el.appendChild(outer);
     },

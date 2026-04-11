@@ -124,46 +124,57 @@ function renderBucket(name, tasks) {
 }
 
 // ── Home widget ────────────────────────────────────────────────────────────
+const TAG_COLOR = {
+  '🔴 Urgent': 'var(--red)',
+  '🟡 Soon':   'var(--yellow)',
+  '🟢 Low':    'var(--green)',
+  '⏳ Blocked': 'var(--muted)',
+};
+
 async function renderTodayWidget(el) {
-  const tasks = await load();
+  const tasks     = await load();
   const todayItems = tasks.filter(t => !t.done && t.bucket === 'Today');
-  const weekCount  = tasks.filter(t => !t.done && t.bucket === 'This Week').length;
-
-  const rows = todayItems.map(t => {
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;align-items:flex-start;gap:8px';
-
-    const label = document.createElement('label');
-    label.className = 'task-check-wrap';
-    label.style.cssText = 'margin-top:1px;flex-shrink:0';
-
-    const cb = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.className = 'task-cb task-widget-cb';
-    cb.dataset.id = t.id;
-
-    const checkmark = document.createElement('span');
-    checkmark.className = 'task-checkmark';
-    label.append(cb, checkmark);
-
-    const text = document.createElement('span');
-    text.style.cssText = 'font-size:0.85rem;line-height:1.45;color:var(--cream)';
-    text.textContent = t.text;
-
-    wrap.append(label, text);
-    return wrap;
-  });
+  const weekItems  = tasks.filter(t => !t.done && t.bucket === 'This Week').slice(0, 3);
 
   el.textContent = '';
-
   const outer = document.createElement('div');
-  outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:8px;padding:4px 0';
+  outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:6px;padding:4px 0';
 
+  // Today task list
   const list = document.createElement('div');
-  list.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px';
+  list.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px;min-height:0';
 
-  if (rows.length) {
-    rows.forEach(r => list.appendChild(r));
+  if (todayItems.length) {
+    todayItems.forEach(t => {
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;align-items:flex-start;gap:7px';
+
+      const label = document.createElement('label');
+      label.className = 'task-check-wrap';
+      label.style.cssText = 'margin-top:2px;flex-shrink:0';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.className = 'task-cb task-widget-cb';
+      cb.dataset.id = t.id;
+      const checkmark = document.createElement('span');
+      checkmark.className = 'task-checkmark';
+      label.append(cb, checkmark);
+
+      const dotColor = TAG_COLOR[t.tag];
+      if (dotColor) {
+        const dot = document.createElement('span');
+        dot.style.cssText = `width:7px;height:7px;border-radius:50%;background:${dotColor};flex-shrink:0;margin-top:5px`;
+        wrap.append(label, dot);
+      } else {
+        wrap.append(label);
+      }
+
+      const text = document.createElement('span');
+      text.style.cssText = 'font-size:0.84rem;line-height:1.45;color:var(--cream);flex:1;min-width:0';
+      text.textContent = t.text;
+      wrap.append(text);
+      list.appendChild(wrap);
+    });
   } else {
     const empty = document.createElement('div');
     empty.style.cssText = 'color:var(--muted);font-size:0.85rem;padding:4px 0';
@@ -172,11 +183,32 @@ async function renderTodayWidget(el) {
   }
   outer.appendChild(list);
 
-  if (weekCount) {
-    const sub = document.createElement('div');
-    sub.style.cssText = 'font-size:0.75rem;color:var(--muted)';
-    sub.textContent = `${weekCount} task${weekCount !== 1 ? 's' : ''} coming up this week`;
-    outer.appendChild(sub);
+  // Up Next section
+  if (weekItems.length) {
+    const divider = document.createElement('div');
+    divider.style.cssText = 'border-top:1px solid var(--border);margin:2px 0';
+    outer.appendChild(divider);
+
+    const upLabel = document.createElement('div');
+    upLabel.style.cssText = 'font-size:0.7rem;font-weight:700;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;margin-bottom:2px';
+    upLabel.textContent = 'Up Next';
+    outer.appendChild(upLabel);
+
+    const upList = document.createElement('div');
+    upList.style.cssText = 'display:flex;flex-direction:column;gap:3px';
+    weekItems.forEach(t => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:baseline;gap:5px;font-size:0.78rem';
+      const dot = document.createElement('span');
+      dot.style.cssText = 'color:var(--muted);flex-shrink:0';
+      dot.textContent = '·';
+      const txt = document.createElement('span');
+      txt.style.cssText = 'color:var(--muted);line-height:1.4';
+      txt.textContent = t.text;
+      row.append(dot, txt);
+      upList.appendChild(row);
+    });
+    outer.appendChild(upList);
   }
 
   const link = document.createElement('a');
