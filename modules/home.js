@@ -176,7 +176,7 @@ function attachRemoveListeners() {
       const wid    = btn.dataset.wid;
       const gsItem = gs.querySelector(`[gs-id="${wid}"]`);
       if (gsItem) {
-        grid.removeWidget(gsItem, false);
+        grid.removeWidget(gsItem);
         refreshAddTray();
         await saveLayout();
       }
