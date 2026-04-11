@@ -7,6 +7,21 @@ const KEY = 'plan/tasks';
 
 function esc(s) { return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+function parseDaysLeft(datesStr) {
+  const parts = datesStr.split('–');
+  if (parts.length < 2) return null;
+  const d = new Date(parts[1].trim() + ' 2026');
+  if (isNaN(d)) return null;
+  return Math.max(0, Math.ceil((d - new Date()) / 86400000));
+}
+
+function taskMeta(text) {
+  if (text.includes('🔴')) return { color: 'var(--red)',    label: text.replace(/🔴/g, '').trim() };
+  if (text.includes('⚠️')) return { color: 'var(--orange)', label: text.replace(/⚠️/g, '').trim() };
+  if (text.includes('✅')) return { color: 'var(--green)',  label: text.replace(/✅/g, '').trim() };
+  return { color: 'var(--muted)', label: text };
+}
+
 async function getSaved() {
   const modern = await storage.get(KEY, null);
   if (modern) return modern;
@@ -99,19 +114,33 @@ export default {
       const pct    = computePct(pi, saved);
       const tasks  = PHASES[pi].tasks;
       const done   = tasks.filter((_, ti) => saved[pi + '-' + ti]).length;
+      const daysLeft = parseDaysLeft(active.dates);
 
       const outer = document.createElement('div');
-      outer.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding:4px 0;height:100%';
+      outer.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:4px 0;height:100%';
 
+      // Header: phase name + days-left badge
       const header = document.createElement('div');
+      header.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-shrink:0';
+      const nameWrap = document.createElement('div');
       const name = document.createElement('div');
       name.style.cssText = 'font-family:var(--font-brand);font-weight:800;font-size:0.95rem';
       name.textContent = `${active.name} — ${active.subtitle}`;
       const dates = document.createElement('div');
       dates.style.cssText = 'font-size:0.78rem;color:var(--muted);margin-top:2px';
       dates.textContent = active.dates;
-      header.append(name, dates);
+      nameWrap.append(name, dates);
+      header.appendChild(nameWrap);
 
+      if (daysLeft !== null) {
+        const badge = document.createElement('span');
+        const urgentColor = daysLeft <= 3 ? 'var(--red)' : daysLeft <= 7 ? 'var(--orange)' : 'var(--border)';
+        badge.style.cssText = `font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${urgentColor};color:var(--cream);white-space:nowrap;flex-shrink:0;margin-top:3px`;
+        badge.textContent = daysLeft === 0 ? 'Due today' : `${daysLeft}d left`;
+        header.appendChild(badge);
+      }
+
+      // Progress bar + count
       const bar = document.createElement('div');
       bar.className = 'phase-progress';
       const fill = document.createElement('div');
@@ -120,39 +149,61 @@ export default {
       bar.appendChild(fill);
 
       const count = document.createElement('div');
-      count.style.cssText = 'font-size:0.8rem;color:var(--muted)';
+      count.style.cssText = 'font-size:0.8rem;color:var(--muted);flex-shrink:0';
       count.textContent = `${done} of ${tasks.length} tasks · ${pct}%`;
 
-      // Show remaining tasks (up to 5)
-      const remaining = tasks.filter((_, ti) => !saved[pi + '-' + ti]).slice(0, 5);
+      // Remaining tasks — blocked/pending first, color-coded dots
+      const allRemaining = tasks.filter((_, ti) => !saved[pi + '-' + ti]);
+      const sorted = [
+        ...allRemaining.filter(t => t.includes('🔴')),
+        ...allRemaining.filter(t => t.includes('⚠️') && !t.includes('🔴')),
+        ...allRemaining.filter(t => !t.includes('🔴') && !t.includes('⚠️')),
+      ];
+      const visible = sorted.slice(0, 4);
+
       const list = document.createElement('div');
-      list.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px';
-      for (const t of remaining) {
+      list.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;min-height:0';
+      for (const t of visible) {
+        const { color, label } = taskMeta(t);
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:baseline;gap:6px;font-size:0.8rem;line-height:1.4';
         const dot = document.createElement('span');
-        dot.style.cssText = 'color:var(--orange);flex-shrink:0';
-        dot.textContent = '·';
+        dot.style.cssText = `color:${color};flex-shrink:0;font-size:0.65rem`;
+        dot.textContent = '●';
         const txt = document.createElement('span');
-        txt.style.color = 'var(--cream)';
-        txt.textContent = t;
+        txt.style.cssText = `color:${color === 'var(--muted)' ? 'var(--muted)' : 'var(--cream)'}`;
+        txt.textContent = label;
         row.append(dot, txt);
         list.appendChild(row);
       }
-      if (tasks.length - done > 5) {
+      if (allRemaining.length > 4) {
         const more = document.createElement('div');
         more.style.cssText = 'font-size:0.75rem;color:var(--muted)';
-        more.textContent = `+${tasks.length - done - 5} more`;
+        more.textContent = `+${allRemaining.length - 4} more`;
         list.appendChild(more);
+      }
+
+      // Notes snippet
+      if (active.notes) {
+        const divider = document.createElement('div');
+        divider.style.cssText = 'border-top:1px solid var(--border);flex-shrink:0';
+        const snippet = active.notes.split('\n')[0];
+        const note = document.createElement('div');
+        note.style.cssText = 'font-size:0.75rem;color:var(--muted);line-height:1.5;flex-shrink:0';
+        note.textContent = snippet;
+        outer.append(list, divider, note);
+      } else {
+        outer.appendChild(list);
       }
 
       const link = document.createElement('a');
       link.href = '#/plan';
       link.className = 'link-btn';
-      link.style.marginTop = 'auto';
+      link.style.cssText = 'margin-top:auto;flex-shrink:0';
       link.textContent = 'View Full Plan →';
 
-      outer.append(header, bar, count, list, link);
+      outer.prepend(header, bar, count);
+      outer.appendChild(link);
       el.textContent = '';
       el.appendChild(outer);
     },
