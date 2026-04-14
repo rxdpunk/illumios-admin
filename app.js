@@ -13,10 +13,11 @@ import weeklyMod       from './modules/weekly-planner.js';
 import tasksMod        from './modules/tasks.js';
 import businessPlanMod from './modules/business-plan.js';
 import quickLinksMod   from './modules/quick-links.js';
+import docsMod         from './modules/docs.js';
 import settingsMod     from './modules/settings.js';
 
 // Register modules — order = sidebar order
-[homeMod, planMod, dailyLogMod, weeklyMod, tasksMod, businessPlanMod, quickLinksMod, settingsMod]
+[homeMod, planMod, dailyLogMod, weeklyMod, tasksMod, businessPlanMod, docsMod, quickLinksMod, settingsMod]
   .forEach(m => registry.register(m));
 
 // ── Bridge — called by inline auth script ─────────────────────────────────

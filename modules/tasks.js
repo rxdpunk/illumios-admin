@@ -6,99 +6,99 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 const STORAGE_KEY = 'tasks/list';
 const STORAGE_VERSION_KEY = 'tasks/version';
-const SEED_VERSION = '2026-04-14-beta';
+const SEED_VERSION = '2026-04-14-academia-v4';
 
 // ── Seed tasks from TASKS.md (first-run defaults) ─────────────────────────
 const SEED_TASKS = [
   {
-    id: 't-1', bucket: 'Today', text: 'Finalize beta promise for Illumios training',
+    id: 't-1', bucket: 'Today', text: 'Lock the public offer messaging stack for Illumios Academia',
     done: false,
-    note: 'Use the PRD promise as the working default. Keep it focused on small business owners, time savings, and smarter workflows.',
+    note: 'Use the PRD promise as the working default. Keep it focused on small business owners, time savings, smarter workflows, and the 30-day result.',
     tag: '🔴 Urgent',
   },
   {
-    id: 't-2', bucket: 'Today', text: 'Lock the beta name and founding-member price',
+    id: 't-2', bucket: 'Today', text: 'Keep the canonical offer name and price visible everywhere',
     done: false,
-    note: 'Recommended default: "AI for Small Business Owners: Your First 30 Days" at $497.',
+    note: 'Use "Illumios Academia" with the subtitle "AI for Small Business Owners: Your First 30 Days" and a default target price of $497.',
     tag: '🔴 Urgent',
   },
   {
-    id: 't-3', bucket: 'Today', text: 'Write the 4 session titles for the beta',
-    done: false,
-    note: 'Keep them practical. Do not overbuild the course before the first cohort exists.',
+    id: 't-3', bucket: 'Today', text: 'Choose the primary enrollment path for the first cohort',
+    done: true,
+    note: 'Current working path: website application -> fit quiz -> enrollment call. The remaining gap is real server-side GHL capture.',
     tag: '🔴 Urgent',
   },
   {
-    id: 't-4', bucket: 'Today', text: 'Draft the beta invite message',
+    id: 't-4', bucket: 'Today', text: 'Align quiz copy and CTA to the main offer',
     done: false,
-    note: 'Write the message you can send to warm contacts, BNI connections, and discovery-call prospects this week.',
+    note: 'Quiz outcomes should route qualified leads toward the program, not a generic services conversation.',
     tag: '🔴 Urgent',
   },
   {
-    id: 't-5', bucket: 'This Week', text: 'Build Session 1 outline and worksheet',
+    id: 't-5', bucket: 'This Week', text: 'Write the invitation / simple sales page copy',
     done: false,
-    note: 'Session 1 should help people identify 3 meaningful AI use cases in their business.',
+    note: 'This should be the concise asset you can send to warm contacts, BNI connections, and discovery-call prospects this week.',
     tag: '🟡 Soon',
   },
   {
-    id: 't-6', bucket: 'This Week', text: 'Build Sessions 2–4 outlines and outputs',
+    id: 't-6', bucket: 'This Week', text: 'Build the first delivery materials',
     done: false,
-    note: 'Each session should end with a practical output: prompts, one workflow, and a 30-day action plan.',
+    note: 'Start with Session 1 outline and worksheet, then complete Sessions 2–4 so each session ends with a practical output.',
     tag: '🟡 Soon',
   },
   {
-    id: 't-7', bucket: 'This Week', text: 'Create onboarding email and simple enrollment flow',
+    id: 't-7', bucket: 'This Week', text: 'Set up admin tracking for program operations',
     done: false,
-    note: 'Participants need a payment path, calendar expectations, and a clear description of what they will get.',
+    note: 'Track Academia leads, booked calls, enrollments, attendance, feedback, and testimonials.',
     tag: '🟡 Soon',
   },
   {
-    id: 't-8', bucket: 'This Week', text: 'Invite the first 5 warm prospects to the beta',
+    id: 't-8', bucket: 'This Week', text: 'Recruit the first cohort',
     done: false,
-    note: 'Start with people who already know you and are likely to give useful feedback, not perfect strangers.',
+    note: 'Invite warm contacts, talk leads, and local-network prospects into the program first.',
     tag: '🔴 Urgent',
   },
   {
-    id: 't-9', bucket: 'This Week', text: 'Test Maya voice AI end-to-end',
+    id: 't-9', bucket: 'This Week', text: 'Test Maya voice AI with offer-first positioning',
     done: false,
-    note: 'Run a real call and verify disclosure, routing, customer-status detection, and the next-step path.',
+    note: 'Run a real call and verify disclosure, routing, customer-status detection, and the offer-first next-step path.',
     tag: '🟡 Soon',
   },
   {
     id: 't-10', bucket: 'This Week', text: 'Complete GHL affiliate signup',
     done: false,
-    note: 'Get the affiliate link now so it can be placed into the curriculum when the beta turns into Academia.',
+    note: 'Get the affiliate link now so it can be placed into the curriculum when the first cohort becomes ongoing Academia.',
     tag: '🟡 Soon',
   },
   {
-    id: 't-11', bucket: 'Later', text: 'Wire quiz completions into GHL with a quiz-completed tag',
+    id: 't-11', bucket: 'This Week', text: 'Wire quiz completions into GHL with an Academia-interest path',
     done: false,
-    note: 'Quiz leads should not disappear. Create or upsert contacts and make them usable for follow-up.',
-    tag: '🟢 Low',
+    note: 'The website now gates quiz entry behind an application. Paste the inbound-webhook workflow URL into ghl-config.js in the website and quiz repos, then map contact creation in GHL.',
+    tag: '🟡 Soon',
   },
   {
-    id: 't-12', bucket: 'Later', text: 'Add GHL private integration key to the admin dashboard',
+    id: 't-12', bucket: 'This Week', text: 'File the New Jersey LLC',
+    done: false,
+    note: 'This replaces the old Wyoming default and should stay consistent across threads.',
+    tag: '🟡 Soon',
+  },
+  {
+    id: 't-13', bucket: 'Later', text: 'Add GHL private integration key to the admin dashboard',
     done: false,
     note: 'Needed before live data widgets can show pipeline, conversations, leads, and calls.',
     tag: '🟢 Low',
   },
   {
-    id: 't-13', bucket: 'Later', text: 'Build dashboard live-data widgets',
+    id: 't-14', bucket: 'Later', text: 'Build dashboard live-data widgets',
     done: false,
-    note: 'Pipeline snapshot, open conversations, new leads today, discovery calls today, and Maya call log.',
+    note: 'Academia leads, open conversations, new leads today, discovery calls today, and Maya call log.',
     tag: '🟢 Low',
   },
   {
-    id: 't-14', bucket: 'Later', text: 'Create testimonial and case-study capture template',
+    id: 't-15', bucket: 'Later', text: 'Create testimonial and case-study capture template',
     done: false,
     note: 'You will need this immediately after the first cohort to turn wins into proof.',
     tag: '🟢 Low',
-  },
-  {
-    id: 't-15', bucket: 'Waiting On', text: 'File Wyoming LLC',
-    done: false,
-    note: 'Waiting on Sunshine sign-off.',
-    tag: '⏳ Blocked',
   },
   {
     id: 't-16', bucket: 'Waiting On', text: 'A2P SMS campaign carrier approval',

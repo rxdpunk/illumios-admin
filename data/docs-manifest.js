@@ -1,0 +1,23 @@
+// Generated from docs/illumios — keep in sync with main repo docs.
+export default [
+  { title: '90 Day Launch Plan V2', group: 'root', type: 'md', path: '90-Day-Launch-Plan-v2.md', href: './docs/illumios/90-Day-Launch-Plan-v2.md' },
+  { title: 'Claude', group: 'root', type: 'md', path: 'CLAUDE.md', href: './docs/illumios/CLAUDE.md' },
+  { title: 'Tasks', group: 'root', type: 'md', path: 'TASKS.md', href: './docs/illumios/TASKS.md' },
+  { title: 'Illumios Local Site Content Template', group: 'outputs', type: 'md', path: 'outputs/illumios-local-site-content-template.md', href: './docs/illumios/outputs/illumios-local-site-content-template.md' },
+  { title: 'Maya Guardrail Test Cases', group: 'outputs', type: 'md', path: 'outputs/maya-guardrail-test-cases.md', href: './docs/illumios/outputs/maya-guardrail-test-cases.md' },
+  { title: 'Founder Context Internal', group: 'planning', type: 'md', path: 'planning/founder-context-internal.md', href: './docs/illumios/planning/founder-context-internal.md' },
+  { title: 'GHL Academia Lead Capture Setup', group: 'planning', type: 'md', path: 'planning/ghl-academia-lead-capture-setup.md', href: './docs/illumios/planning/ghl-academia-lead-capture-setup.md' },
+  { title: 'Illumios Academia Curriculum', group: 'planning', type: 'md', path: 'planning/illumios-academia-curriculum.md', href: './docs/illumios/planning/illumios-academia-curriculum.md' },
+  { title: 'Illumios Academia Curriculum', group: 'planning', type: 'pdf', path: 'planning/illumios-academia-curriculum.pdf', href: './docs/illumios/planning/illumios-academia-curriculum.pdf' },
+  { title: 'Illumios Academia Offer Package', group: 'planning', type: 'md', path: 'planning/illumios-academia-offer-package.md', href: './docs/illumios/planning/illumios-academia-offer-package.md' },
+  { title: 'Illumios Academia Offer Package', group: 'planning', type: 'pdf', path: 'planning/illumios-academia-offer-package.pdf', href: './docs/illumios/planning/illumios-academia-offer-package.pdf' },
+  { title: 'Illumios Academia Prd', group: 'planning', type: 'md', path: 'planning/illumios-academia-prd.md', href: './docs/illumios/planning/illumios-academia-prd.md' },
+  { title: 'Illumios Academia Session 1 Facilitator Notes', group: 'planning', type: 'md', path: 'planning/illumios-academia-session-1-facilitator-notes.md', href: './docs/illumios/planning/illumios-academia-session-1-facilitator-notes.md' },
+  { title: 'Illumios Academia Session 1 Facilitator Notes', group: 'planning', type: 'pdf', path: 'planning/illumios-academia-session-1-facilitator-notes.pdf', href: './docs/illumios/planning/illumios-academia-session-1-facilitator-notes.pdf' },
+  { title: 'Illumios Academia Session 1 Worksheet', group: 'planning', type: 'md', path: 'planning/illumios-academia-session-1-worksheet.md', href: './docs/illumios/planning/illumios-academia-session-1-worksheet.md' },
+  { title: 'Illumios Academia Session 1 Worksheet', group: 'planning', type: 'pdf', path: 'planning/illumios-academia-session-1-worksheet.pdf', href: './docs/illumios/planning/illumios-academia-session-1-worksheet.pdf' },
+  { title: 'Illumios LLC Board Memo 2026 04 14', group: 'planning', type: 'md', path: 'planning/illumios-llc-board-memo-2026-04-14.md', href: './docs/illumios/planning/illumios-llc-board-memo-2026-04-14.md' },
+  { title: 'Illumios LLC Formation Memo 2026 04 14', group: 'planning', type: 'md', path: 'planning/illumios-llc-formation-memo-2026-04-14.md', href: './docs/illumios/planning/illumios-llc-formation-memo-2026-04-14.md' },
+  { title: 'Illumios NJ LLC Filing Checklist 2026 04 14', group: 'planning', type: 'md', path: 'planning/illumios-nj-llc-filing-checklist-2026-04-14.md', href: './docs/illumios/planning/illumios-nj-llc-filing-checklist-2026-04-14.md' },
+  { title: 'Illumios Operating Directives', group: 'planning', type: 'md', path: 'planning/illumios-operating-directives.md', href: './docs/illumios/planning/illumios-operating-directives.md' },
+];

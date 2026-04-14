@@ -27,17 +27,17 @@ const LAYOUT_PREFIX = 'home/layout/';
 // ── Status bar ────────────────────────────────────────────────────────────
 function buildStatusBar() {
   const today     = new Date();
-  const phase1End = new Date('2026-04-19');
-  const daysLeft  = Math.max(0, Math.ceil((phase1End - today) / 86400000));
+  const offerLaunchEnd = new Date('2026-04-30');
+  const daysLeft  = Math.max(0, Math.ceil((offerLaunchEnd - today) / 86400000));
 
   const items = [
-    { label: 'Website',   dot: 'green',  val: 'Live' },
-    { label: 'GHL',       dot: 'green',  val: 'Active' },
-    { label: 'Maya AI',   dot: 'green',  val: 'Live' },
-    { label: 'A2P Brand', dot: 'green',  val: 'Approved' },
-    { label: 'A2P SMS',   dot: 'yellow', val: 'Carrier Pending' },
+    { label: 'Website',   dot: 'green',  val: 'Offer-first' },
+    { label: 'Admin',     dot: 'green',  val: 'Tracking Academia' },
+    { label: 'Quiz',      dot: 'yellow', val: 'Need Routing Pass' },
+    { label: 'Maya AI',   dot: 'yellow', val: 'Need Offer Prompt Pass' },
+    { label: 'NJ LLC',    dot: 'yellow', val: 'Pending' },
     {
-      label: 'Phase 1',
+      label: 'Offer Launch',
       dot: daysLeft > 0 ? 'orange' : 'red',
       val: daysLeft > 0 ? `${daysLeft}d left` : 'Complete',
     },

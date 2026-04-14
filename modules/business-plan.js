@@ -6,7 +6,7 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 const STORAGE_KEY = 'biz-plan/sections';
 const VERSION_KEY = 'biz-plan/version';
-const PLAN_VERSION = '2026-04-14-beta-prd';
+const PLAN_VERSION = '2026-04-14-academia-prd-v3';
 
 const DEFAULT_SECTIONS = [
   {
@@ -14,20 +14,24 @@ const DEFAULT_SECTIONS = [
     title: 'Purpose',
     content: `Illumios needs a real first product, not a giant polished academy before customers exist.
 
-The first product is a focused beta training that helps a specific kind of customer get one real result quickly.
+The first product is a focused live training program that helps a specific kind of customer get one real result quickly.
 
-The beta exists to validate demand, test pricing, refine the curriculum, generate testimonials, and identify what should become the long-term Illumios Academia offer.`,
+The first cohort exists to validate demand, test pricing, refine the curriculum, generate testimonials, and identify what should become the long-term Illumios Academia offer.`,
   },
   {
     id: 's-summary',
     title: 'Product Summary',
-    content: `Working product name:
+    content: `Canonical offer name:
+
+Illumios Academia
+
+Public-facing subtitle:
 
 AI for Small Business Owners: Your First 30 Days
 
-Illumios will launch a live beta training program for small business owners who want to use AI to save time, reduce busywork, and operate more effectively without hiring more staff.
+Illumios will launch a live training program for small business owners who want to use AI to save time, reduce busywork, and operate more effectively without hiring more staff.
 
-This is the first paid learning product for Illumios.`,
+This is the first paid learning product for Illumios and the current main offer across website, admin, and quiz.`,
   },
   {
     id: 's-target',
@@ -66,7 +70,7 @@ They do not need endless tutorials. They need a guided path to one meaningful wi
   },
   {
     id: 's-offer',
-    title: 'Beta Offer',
+    title: 'Offer',
     content: `Offer:
 A small-group live training experience for business owners who want to begin using AI in practical ways immediately.
 
@@ -74,7 +78,7 @@ Recommended format:
 - 4 live sessions
 - 90 minutes per session
 - delivered over 2 weeks
-- small beta cohort
+- small live cohort
 - optional office hours or Q&A support between sessions
 
 Suggested cohort size:
@@ -119,7 +123,7 @@ Output: leave with a 30-day action plan for continued use`,
     id: 's-scope',
     title: 'MVP Scope',
     content: `In scope:
-- one beta cohort
+- one founding cohort
 - one simple sales page or concise invitation message
 - one clear transformation promise
 - 4-session live curriculum
@@ -138,21 +142,21 @@ Out of scope:
   {
     id: 's-journey',
     title: 'Customer Journey',
-    content: `1. Prospect hears about Illumios through a talk, referral, networking event, or outreach.
-2. Prospect sees a simple invitation to the beta or books a discovery call.
+    content: `1. Prospect hears about Illumios through a talk, referral, networking event, outreach, or the quiz.
+2. Prospect sees a simple invitation to the program or books a discovery call to confirm fit.
 3. Prospect understands the promise quickly.
 4. Prospect enrolls.
 5. Prospect receives onboarding message, schedule, and expectations.
 6. Prospect attends live sessions.
 7. Prospect completes one meaningful implementation win.
 8. Prospect gives feedback and testimonial.
-9. Prospect is offered a next-step strategy session or future Academia path.`,
+9. Prospect is offered a next-step strategy session or future Academia path after the program.`,
   },
   {
     id: 's-launch',
     title: 'Launch Requirements',
     content: `Must have:
-- final beta title
+- final offer title
 - one-sentence promise
 - 4-session outline
 - session schedule
@@ -173,7 +177,7 @@ Should have:
     id: 's-kpis',
     title: 'Success Metrics',
     content: `Product metrics:
-- at least 4 paid beta participants
+- at least 4 paid participants
 - at least 80 percent session attendance
 - at least 75 percent of participants complete one implementation win
 - average post-program satisfaction of 8/10 or higher
@@ -191,7 +195,7 @@ Business metrics:
 Guardrail: keep the promise tied to one audience and one clear result
 
 Risk: the course becomes too big before launch
-Guardrail: teach live first and do not build the full academy before the beta
+Guardrail: teach live first and do not build the full academy before the first cohort
 
 Risk: prospects are interested but do not buy
 Guardrail: test the promise in real conversations and sell the transformation, not the syllabus
@@ -203,7 +207,7 @@ Guardrail: require one specific output from every session`,
     id: 's-next',
     title: 'What To Do Next',
     content: `1. Finalize the one-sentence promise.
-2. Lock the beta name.
+2. Lock the canonical offer name and public subtitle.
 3. Lock the price.
 4. Write the 4 session titles.
 5. Draft the invitation message.
@@ -217,7 +221,7 @@ Guardrail: require one specific output from every session`,
 - Will the first cohort be general small business owners or a narrower niche?
 - Will recordings be included?
 - Will there be office hours between sessions?
-- Will participants get templates or only live instruction in beta v1?`,
+- Will participants get templates or only live instruction in the first cohort?`,
   },
 ];
 

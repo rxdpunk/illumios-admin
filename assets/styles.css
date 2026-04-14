@@ -259,6 +259,159 @@ body::before {
   color: var(--cream); font-size: 0.8rem; font-weight: 600;
   text-decoration: none; transition: all var(--transition);
 }
+
+.docs-shell {
+  display: grid;
+  gap: 22px;
+}
+
+.docs-hero {
+  display: grid;
+  gap: 12px;
+}
+
+.docs-heading {
+  font-family: var(--font-brand);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--cream);
+}
+
+.docs-subtitle {
+  color: var(--muted);
+  max-width: 760px;
+  line-height: 1.55;
+}
+
+.docs-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.docs-stat {
+  min-width: 120px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  display: grid;
+  gap: 2px;
+}
+
+.docs-stat strong {
+  font-size: 1.1rem;
+  color: var(--cream);
+}
+
+.docs-stat span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.docs-group {
+  display: grid;
+  gap: 12px;
+}
+
+.docs-group-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.docs-group-header h3 {
+  font-family: var(--font-brand);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--cream);
+}
+
+.docs-group-header span {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.doc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.doc-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.35;
+}
+
+.doc-meta {
+  display: grid;
+  gap: 8px;
+}
+
+.doc-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--orange-dim);
+  border: 1px solid var(--orange-glow);
+  color: var(--orange);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.doc-path {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.doc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.doc-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--orange);
+  border: 1px solid var(--orange);
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.doc-link:hover {
+  filter: brightness(1.05);
+}
+
+.doc-link-muted {
+  background: var(--bg-raised);
+  border-color: var(--border-strong);
+  color: var(--cream);
+}
 .link-btn:hover { border-color: var(--orange); color: var(--orange); }
 
 /* ── Gridstack Theme ─────────────────────────────────────── */

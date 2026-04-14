@@ -1,12 +1,12 @@
-// 90-Day Launch Plan — Illumios beta-training execution model
+// 90-Day Launch Plan — Illumios Academia execution model
 // Last reviewed: 2026-04-14
 // ✅ = confirmed done | 🔴 = blocked | 🟡 = in progress | ⚠️ = pending
 
 export const PHASES = [
   {
     name: 'Phase 1',
-    subtitle: 'Foundation & Beta Packaging',
-    dates: 'Apr 5 – Apr 19',
+    subtitle: 'Offer Launch & Alignment',
+    dates: 'Apr 14 – Apr 30',
     active: true,
     tasks: [
       'illumios.com live ✅',
@@ -15,17 +15,19 @@ export const PHASES = [
       'AI Roadmap Quiz published ✅',
       'Maya AI Voice Receptionist live ✅',
       'GHL sub-account fully configured ✅',
-      'Finalize beta promise, name, and founding-member price ⚠️',
-      'Draft 4-session beta curriculum outline ⚠️',
-      'Draft beta invite and outreach list ⚠️',
+      'Align website, admin, and quiz around Illumios Academia ⚠️',
+      'Finalize offer promise, name, and founding-member price ⚠️',
+      'Choose the primary enrollment path for the first cohort ⚠️',
+      'Draft 4-session curriculum outline ⚠️',
+      'Draft program invite and outreach list ⚠️',
+      'Wire quiz lead routing into GHL ⚠️',
       'Test Maya end-to-end with live call ⚠️',
       'GHL affiliate program signup ⚠️',
-      'Verify sales pipeline naming in GHL ⚠️',
-      'Wyoming LLC filed ⚠️ (waiting on Sunshine sign-off)',
+      'File New Jersey LLC ⚠️',
     ],
-    notes: `Foundation is mostly complete. The priority now is not more infrastructure.
-The win for Phase 1 is a sellable beta offer: clear promise, clear price, clear 4-session outline, and a message you can send this week.
-Do not disappear into polishing. Package the beta and move to outreach.`,
+    notes: `Foundation is mostly complete. The priority now is alignment and packaging around Illumios Academia.
+The win for Phase 1 is a sellable offer: clear promise, clear price, clear 4-session outline, and a message you can send this week.
+Do not disappear into polishing. Package the program and move to outreach.`,
   },
   {
     name: 'Phase 2',
@@ -40,12 +42,12 @@ Do not disappear into polishing. Package the beta and move to outreach.`,
       'Create onboarding email and participant worksheet pack',
       'Create simple enrollment and payment flow',
       'Invite first 5 warm prospects',
-      'Book 3 discovery calls for beta prospects',
-      'Enroll first 4 paid beta participants',
+      'Book 3 discovery calls for Academia prospects',
+      'Enroll first 4 paid participants',
     ],
     notes: `This phase turns the idea into something people can buy.
 Recruit from the warm network first: people who trust you, reply to you, and are likely to give good feedback.
-Sell the transformation, not the syllabus. The beta is about one real business win in 30 days.`,
+Sell the transformation, not the syllabus. The program is about one real business win in 30 days.`,
   },
   {
     name: 'Phase 3',
@@ -53,13 +55,13 @@ Sell the transformation, not the syllabus. The beta is about one real business w
     dates: 'May 5 – Jun 3',
     active: false,
     tasks: [
-      'Run first live beta cohort',
+      'Run first live cohort',
       'Track attendance and collect participant questions',
       'Ensure each participant identifies 3 AI use cases',
       'Help each participant build 1 working workflow or process',
       'Collect feedback survey from every participant',
       'Capture 2 testimonials or case-study candidates',
-      'Offer next-step strategy session or Academia path',
+      'Offer next-step strategy session or Academia path after the cohort',
       'Update curriculum based on real friction points',
     ],
     notes: `Phase 3 is about proof, not polish.
@@ -72,10 +74,10 @@ If a participant asks for done-for-you help, log it as market feedback, not as y
     dates: 'Jun 4 – Jul 4',
     active: false,
     tasks: [
-      'Run second beta or open Academia v1 enrollment',
+      'Run second cohort or open Academia v1 enrollment',
       'Publish first student case study or testimonial on the website',
       'Commit to a public pricing menu',
-      'Codify talk → discovery → enrollment loop',
+      'Codify talk → quiz/discovery → enrollment loop',
       'Place GHL affiliate inside the curriculum and track conversions',
       'Create repeatable delivery SOP',
       'Decide office hours or community support format',
