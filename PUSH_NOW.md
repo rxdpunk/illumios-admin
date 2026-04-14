@@ -5,7 +5,10 @@ All files are written. Just need your git credentials to push.
 ## Open Terminal and run:
 
 ```bash
-cd ~/Documents/Dev_Projects/illumios-admin
+cd ~/Dev_Projects/illumios-admin
+
+# Refresh the admin docs library from the main illumios repo
+node scripts/sync-illumios-docs.mjs
 
 # Confirm what changed
 git status
@@ -26,6 +29,7 @@ Then open **admin.illumios.com in an incognito window** and sign in with your @i
 - **Business Plan** — Editable living document. Click ✏️ on any section, edit, save. Tables render nicely.
 - **Daily Log** — Same as before but polished. Autosaves. Past 7 days in history.
 - **90-Day Plan** — Checkable task list with progress bars per phase.
+- **Docs** — Searchable internal library with pinned docs, recent docs, recently added docs, and synced Markdown/PDF files.
 - **Settings** — Phase progress overview, storage usage, layout reset button, roadmap.
 
 ## Delete this file after you push:

@@ -64,7 +64,9 @@ function buildStatusBar() {
 }
 
 // ── Widget card — id/title are developer-defined constants, not user input ─
-function widgetCard(id, title) {
+function widgetCard(widget) {
+  const { id, title, moduleId } = widget;
+  const moduleTitle = registry.get(moduleId)?.title || 'Widget';
   const presets = SIZE_PRESETS.map(p =>
     `<button class="size-btn" data-w="${p.w}" data-wid="${id}">${p.label}</button>`
   ).join('');
@@ -79,9 +81,14 @@ function widgetCard(id, title) {
             <circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
           </svg>
         </div>
-        <div class="widget-title">${title}</div>
-        <div class="widget-size-presets">${presets}</div>
-        <button class="widget-remove-btn" data-wid="${id}" title="Remove widget">×</button>
+        <div class="widget-title-wrap">
+          <div class="widget-kicker">${moduleTitle}</div>
+          <div class="widget-title">${title}</div>
+        </div>
+        <div class="widget-controls">
+          <div class="widget-size-presets">${presets}</div>
+          <button class="widget-remove-btn" data-wid="${id}" title="Remove widget">×</button>
+        </div>
       </div>
       <div class="widget-body" id="wb-${id}"></div>
     </div>`;
@@ -145,7 +152,7 @@ function refreshAddTray() {
         minW: w.minW ?? 2,
         minH: w.minH ?? 3,
         id:   w.id,
-        content: widgetCard(w.id, w.title),
+        content: widgetCard(w),
       });
       const body = document.getElementById('wb-' + w.id);
       if (body) {
@@ -265,7 +272,7 @@ export default {
         minW: w.minW ?? 2,
         minH: w.minH ?? 3,
         id:   item.id,
-        content: widgetCard(item.id, w.title),
+        content: widgetCard(w),
       });
     }
 
