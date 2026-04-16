@@ -35,27 +35,27 @@ const SEED_TASKS = [
     tag: '🟡 Soon',
   },
   {
-    id: 't-5', bucket: 'This Week', text: 'Write the invitation / simple sales page copy',
-    done: false,
-    note: 'This should be the concise asset you can send to warm contacts, BNI connections, and discovery-call prospects this week.',
-    tag: '🟡 Soon',
-  },
-  {
-    id: 't-6', bucket: 'This Week', text: 'Run one founder rehearsal of Sessions 1-4',
+    id: 't-5', bucket: 'This Week', text: 'Run one founder rehearsal of Sessions 1-4',
     done: false,
     note: 'Use one example business all the way through. Capture only what feels confusing, too long, or too fragile, then fix the canonical notes or worksheets.',
     tag: '🟡 Soon',
   },
   {
-    id: 't-7', bucket: 'This Week', text: 'Prepare Cohort 1 teaching assets from the existing pack',
+    id: 't-6', bucket: 'This Week', text: 'Prepare Cohort 1 teaching assets from the existing pack',
     done: false,
     note: 'Use the facilitator-ready slide outline if simple session slides are needed. Do not expand into polished decks, LMS buildout, or evergreen assets yet.',
     tag: '🟡 Soon',
   },
   {
+    id: 't-7', bucket: 'This Week', text: 'Write the invitation / simple sales page copy',
+    done: false,
+    note: 'This should be the concise asset you can send to warm contacts, BNI connections, and discovery-call prospects this week.',
+    tag: '🟡 Soon',
+  },
+  {
     id: 't-8', bucket: 'This Week', text: 'Align the quiz to the main offer',
     done: false,
-    note: 'Outcome copy and CTA should route qualified leads toward Illumios Academia, not a generic services conversation.',
+    note: 'Outcome copy and CTA should route qualified people toward Illumios Academia, not a generic services conversation.',
     tag: '🟡 Soon',
   },
   {

@@ -159,7 +159,7 @@ export default {
 
       // Progress bar + count
       const bar = document.createElement('div');
-      bar.className = 'phase-progress';
+      bar.className = 'phase-progress plan-widget-progress';
       const fill = document.createElement('div');
       fill.className = 'phase-progress-bar';
       fill.style.width = pct + '%';

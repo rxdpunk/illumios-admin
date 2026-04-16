@@ -5,6 +5,16 @@ import { storage } from '../core/storage.js';
 const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const WEEKLY_SEED_VERSION_KEY = 'weekly/seed-version';
+const WEEKLY_SEED_VERSION = '2026-04-15-hub-v1';
+const CURRENT_WEEK_SEED = {
+  priorities: [
+    'Write the invitation / simple sales page copy',
+    'Wire website and quiz contact capture into GHL',
+    'Lock the Hub Vercel start trigger and prep foundation'
+  ],
+  note: 'Finish launch-critical funnel tasks first. Start hub.illumios.com foundation once website and quiz contact-capture handoffs are working.',
+};
 
 function esc(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -54,6 +64,37 @@ async function saveWeek(monday, data) {
   await storage.set(weekKey(monday), data);
 }
 
+async function seedCurrentWeekIfNeeded(monday, data) {
+  const isCurrentWeek = weekKey(monday) === weekKey(weekStart(new Date()));
+  if (!isCurrentWeek) return data;
+
+  const seededVersion = await storage.get(WEEKLY_SEED_VERSION_KEY, null);
+  if (seededVersion === WEEKLY_SEED_VERSION) return data;
+
+  const firstDay = isoDate(monday);
+  const current = data[firstDay] || { priorities: ['', '', ''], note: '' };
+  const priorities = [...current.priorities];
+
+  CURRENT_WEEK_SEED.priorities.forEach((item, index) => {
+    if (!priorities[index]) priorities[index] = item;
+  });
+
+  const note = current.note && current.note.includes('hub.illumios.com')
+    ? current.note
+    : current.note
+      ? `${current.note}\n\n${CURRENT_WEEK_SEED.note}`
+      : CURRENT_WEEK_SEED.note;
+
+  data[firstDay] = {
+    priorities,
+    note,
+  };
+
+  await saveWeek(monday, data);
+  await storage.set(WEEKLY_SEED_VERSION_KEY, WEEKLY_SEED_VERSION);
+  return data;
+}
+
 export default {
   id: 'weekly',
   title: 'Weekly Planner',
@@ -64,7 +105,8 @@ export default {
     let monday = weekStart(new Date());
 
     const render = async () => {
-      const data  = await loadWeek(monday);
+      let data  = await loadWeek(monday);
+      data = await seedCurrentWeekIfNeeded(monday, data);
       const dates = weekDates(monday);
 
       const weekLabel = `${fmtDay(dates[0])} – ${fmtDay(dates[6])}, ${dates[0].getFullYear()}`;

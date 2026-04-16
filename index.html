@@ -28,6 +28,55 @@
     #gate-box h2 { font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; color: rgba(242,237,232,0.5); margin-bottom: 8px; letter-spacing: 0.08em; text-transform: uppercase; }
     #gate-box p { font-family: 'Nunito', sans-serif; font-size: 0.82rem; color: rgba(242,237,232,0.4); margin-bottom: 28px; }
     #g-signin-btn { display: flex; justify-content: center; }
+    #dev-signin {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(242,237,232,0.08);
+    }
+    #dev-signin-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(242,237,232,0.45);
+      margin-bottom: 10px;
+    }
+    #dev-email {
+      width: 100%;
+      box-sizing: border-box;
+      background: #141313;
+      border: 1px solid rgba(242,237,232,0.12);
+      border-radius: 10px;
+      color: #FAF7F2;
+      padding: 12px 14px;
+      font: 600 14px 'Inter', sans-serif;
+      margin-bottom: 10px;
+    }
+    #dev-email:focus {
+      outline: none;
+      border-color: rgba(242,101,34,0.65);
+      box-shadow: 0 0 0 3px rgba(242,101,34,0.12);
+    }
+    #dev-signin-btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: #F26522;
+      color: white;
+      padding: 12px 14px;
+      font: 700 14px 'Nunito', sans-serif;
+      cursor: pointer;
+    }
+    #dev-signin-btn:hover { filter: brightness(1.05); }
+    #dev-signin-help {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.74rem;
+      color: rgba(242,237,232,0.36);
+      margin-top: 8px;
+      line-height: 1.45;
+    }
     #gate-error { font-family: 'Nunito', sans-serif; color: #ef4444; font-size: 0.82rem; margin-top: 14px; min-height: 1.2em; }
     #dashboard { display: none; }
   </style>
@@ -47,6 +96,12 @@
     <h2>Mission Control</h2>
     <p>Sign in with your illumios.com Google account</p>
     <div id="g-signin-btn"></div>
+    <div id="dev-signin">
+      <div id="dev-signin-label">Local Development Access</div>
+      <input id="dev-email" type="email" inputmode="email" autocomplete="email" value="steve@illumios.com" />
+      <button id="dev-signin-btn" type="button">Continue Locally</button>
+      <div id="dev-signin-help">Available only on localhost or file-based local copies. Requires an <code>@illumios.com</code> email.</div>
+    </div>
     <div id="gate-error" role="alert"></div>
   </div>
 </div>
@@ -111,6 +166,7 @@ const TASKS_KEY    = 'mc_tasks';
 const LOGS_KEY     = 'mc_logs';
 const CLIENT_ID    = '278545755272-2lq117irlb0bnc6t4ggp29p8dkq8v1kq.apps.googleusercontent.com';
 const ALLOWED_DOMAIN = 'illumios.com';
+const IS_LOCAL_DEV = ['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:';
 
 function decodeJwtPayload(token) {
   const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
@@ -144,11 +200,42 @@ function isSessionValid() {
 }
 
 function signOut() {
-  google.accounts.id.disableAutoSelect();
+  if (typeof google !== 'undefined' && google.accounts?.id) {
+    google.accounts.id.disableAutoSelect();
+  }
   localStorage.removeItem(AUTH_KEY);
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('gate').style.display = 'flex';
   document.getElementById('gate-error').textContent = '';
+}
+
+function signInLocally(email) {
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  if (!normalizedEmail.endsWith('@' + ALLOWED_DOMAIN)) {
+    document.getElementById('gate-error').textContent =
+      'Local access is restricted to @' + ALLOWED_DOMAIN + ' email addresses.';
+    return;
+  }
+
+  const exp = Math.floor(Date.now() / 1000) + (60 * 60 * 12);
+  localStorage.setItem(AUTH_KEY, JSON.stringify({ email: normalizedEmail, exp }));
+  showDashboard(normalizedEmail);
+}
+
+function initLocalDevSignIn() {
+  const devBox = document.getElementById('dev-signin');
+  const emailInput = document.getElementById('dev-email');
+  const button = document.getElementById('dev-signin-btn');
+  if (!devBox || !emailInput || !button) return;
+
+  devBox.style.display = 'block';
+  button.addEventListener('click', () => signInLocally(emailInput.value));
+  emailInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      signInLocally(emailInput.value);
+    }
+  });
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -157,6 +244,12 @@ window.addEventListener('DOMContentLoaded', () => {
     showDashboard(email);
     return;
   }
+
+  if (IS_LOCAL_DEV) {
+    initLocalDevSignIn();
+    return;
+  }
+
   const tryInit = () => {
     if (typeof google !== 'undefined' && google.accounts) {
       initGoogleSignIn();

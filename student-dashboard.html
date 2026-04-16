@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Illumios Academia 101 Dashboard</title>
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+  <meta name="theme-color" content="#0D0C0C" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10.1.2/dist/gridstack.min.css" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body class="student-view">
+
+<div id="dashboard">
+  <aside id="sidebar">
+    <div class="sidebar-brand student-sidebar-brand">
+      <div class="student-brand-mark">
+        <div class="student-brand-title">Illumios Academia</div>
+        <div class="student-brand-subtitle">101 Student Dashboard</div>
+      </div>
+      <p class="student-sidebar-note">
+        One reusable workflow. One clear review step. One visible win you can keep using after class.
+      </p>
+    </div>
+
+    <nav id="sidebar-nav" aria-label="Primary navigation"></nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="user-avatar">A</div>
+        <div class="user-details">
+          <div class="user-email" id="user-email">Local student workspace</div>
+          <div class="user-role" id="user-role">Vendor-neutral starter</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div id="app-main">
+    <header id="topbar">
+      <div class="topbar-left">
+        <h1 id="page-title">Dashboard</h1>
+        <span class="date-chip" id="nav-date"></span>
+      </div>
+      <div class="topbar-right">
+        <span class="phase-badge" id="phase-badge">Illumios Academia 101</span>
+        <button class="customize-btn" id="customize-btn" style="display:none">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Customize
+        </button>
+      </div>
+    </header>
+
+    <div id="view"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gridstack@10.1.2/dist/gridstack-all.js"></script>
+<script type="module" src="student-app.js"></script>
+</body>
+</html>

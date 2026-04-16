@@ -102,15 +102,15 @@ export default {
             </div>
             <div class="settings-roadmap-item">
               <span class="dot dot-yellow"></span>
-              <span><strong>Pass 2</strong> — GitHub-as-database (illumios-data repo), shared state between Steve + Sunshine</span>
+              <span><strong>Pass 2</strong> — Stabilize enrollment flow, then stand up <code>hub.illumios.com</code> on Vercel + Supabase</span>
             </div>
             <div class="settings-roadmap-item">
               <span class="dot dot-muted"></span>
-              <span><strong>Pass 3</strong> — Live GHL data widgets, Maya call log, pipeline snapshot</span>
+              <span><strong>Pass 3</strong> — Migrate <code>illumios.com</code> to Vercel after the application → quiz → enrollment path is validated</span>
             </div>
             <div class="settings-roadmap-item">
               <span class="dot dot-muted"></span>
-              <span><strong>Pass 4</strong> — Drag-and-drop widget library, add/remove from Home</span>
+              <span><strong>Pass 4</strong> — Live GHL data widgets, Maya call log, pipeline snapshot, and shared-state improvements</span>
             </div>
           </div>
         </div>

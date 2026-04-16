@@ -1,5 +1,5 @@
 // 90-Day Launch Plan — Illumios Academia execution model
-// Last reviewed: 2026-04-14
+// Last reviewed: 2026-04-15
 // ✅ = confirmed done | 🔴 = blocked | 🟡 = in progress | ⚠️ = pending
 
 export const PHASES = [
@@ -17,10 +17,15 @@ export const PHASES = [
       'GHL sub-account fully configured ✅',
       'Align website, admin, and quiz around Illumios Academia ⚠️',
       'Finalize offer promise, name, and founding-member price ⚠️',
-      'Choose the primary enrollment path for the first cohort ⚠️',
+      'Choose the primary enrollment path for the first cohort ✅',
+      'Write the invitation / simple sales page copy ⚠️',
+      'Update cross-repo audience wording ⚠️',
+      'Align quiz to the main offer ⚠️',
+      'Lock the Hub Vercel conversion start trigger ⚠️',
+      'Wire website application → GHL contact capture ⚠️',
+      'Wire quiz completion → GHL contact capture ⚠️',
       'Draft 4-session curriculum outline ⚠️',
-      'Draft program invite and outreach list ⚠️',
-      'Wire quiz lead routing into GHL ⚠️',
+      'Start Hub foundation planning before participant delivery depends on it ⚠️',
       'Test Maya end-to-end with live call ⚠️',
       'GHL affiliate program signup ⚠️',
       'File New Jersey LLC ⚠️',
@@ -36,11 +41,12 @@ Do not disappear into polishing. Package the program and move to outreach.`,
     active: false,
     tasks: [
       'Build Session 1 outline and worksheet',
-      'Build Session 2 outline and worksheet',
-      'Build Session 3 workflow lab',
-      'Build Session 4 30-day action plan materials',
+      'Build Sessions 2–4 delivery materials',
       'Create onboarding email and participant worksheet pack',
       'Create simple enrollment and payment flow',
+      'Stand up Next.js starter for hub.illumios.com',
+      'Configure Vercel project and domain path for the Hub',
+      'Configure Supabase project for the Hub',
       'Invite first 5 warm prospects',
       'Book 3 discovery calls for Academia prospects',
       'Enroll first 4 paid participants',
@@ -78,6 +84,7 @@ If a participant asks for done-for-you help, log it as market feedback, not as y
       'Publish first student case study or testimonial on the website',
       'Commit to a public pricing menu',
       'Codify talk → quiz/discovery → enrollment loop',
+      'Migrate illumios.com from GitHub Pages to Vercel',
       'Place GHL affiliate inside the curriculum and track conversions',
       'Create repeatable delivery SOP',
       'Decide office hours or community support format',

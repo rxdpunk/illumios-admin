@@ -43,21 +43,22 @@ function renderSidebar() {
     btn.innerHTML  = (mod.icon || '') + '<span>' + escapeHtml(mod.title) + '</span>';
     navEl.appendChild(btn);
   }
-  updateActiveNav();
+  updateActiveNav(defaultId);
 }
 
-function updateActiveNav() {
+function updateActiveNav(activeId = currentId()) {
   if (!navEl) return;
-  const active = currentId();
   for (const el of navEl.querySelectorAll('.nav-item')) {
-    el.classList.toggle('active', el.dataset.moduleId === active);
+    el.classList.toggle('active', el.dataset.moduleId === activeId);
   }
 }
 
 async function render() {
-  const id = currentId();
-  let mod = registry.get(id);
+  const requestedId = currentId();
+  let resolvedId = requestedId;
+  let mod = registry.get(requestedId);
   if (!mod) {
+    resolvedId = defaultId;
     mod = registry.get(defaultId);
     if (!mod) return;
   }
@@ -70,7 +71,10 @@ async function render() {
   // Clear view
   viewEl.textContent   = '';
   pageTitleEl.textContent = mod.title;
-  updateActiveNav();
+  updateActiveNav(resolvedId);
+  if (resolvedId !== requestedId) {
+    history.replaceState(null, '', '#/' + resolvedId);
+  }
 
   // Context passed to every module — add userEmail so modules can namespace storage
   const ctx = { navigate, userEmail };
