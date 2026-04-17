@@ -6,14 +6,14 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const WEEKLY_SEED_VERSION_KEY = 'weekly/seed-version';
-const WEEKLY_SEED_VERSION = '2026-04-15-hub-v1';
+const WEEKLY_SEED_VERSION = '2026-04-17-cross-project-v1';
 const CURRENT_WEEK_SEED = {
   priorities: [
-    'Write the invitation / simple sales page copy',
-    'Wire website and quiz contact capture into GHL',
-    'Lock the Hub Vercel start trigger and prep foundation'
+    'Create the website GHL waitlist workflow, add Vercel env vars, and deploy the priority-list flow',
+    'Turn the Hub PRD into an implementation plan, then scaffold the Next.js + Supabase starter',
+    'Decide the Prospecting Website Builder persistence and deployment slice, then prep admin ops tracking'
   ],
-  note: 'Finish launch-critical funnel tasks first. Start hub.illumios.com foundation once website and quiz contact-capture handoffs are working.',
+  note: 'Admin is already live on Vercel. Keep the website focused on the founding-cohort waitlist handoff, move the Hub from PRD to implementation plan, and avoid re-architecting Prospecting Website Builder before persistence and ingestion decisions are locked.',
 };
 
 function esc(s) {

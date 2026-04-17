@@ -6,7 +6,7 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 const STORAGE_KEY = 'biz-plan/sections';
 const VERSION_KEY = 'biz-plan/version';
-const PLAN_VERSION = '2026-04-14-academia-prd-v3';
+const PLAN_VERSION = '2026-04-17-cross-project-v1';
 
 const DEFAULT_SECTIONS = [
   {
@@ -27,11 +27,17 @@ Illumios Academia
 
 Public-facing subtitle:
 
-AI for Small Business Owners: Your First 30 Days
+AI for Real Work: Your First 30 Days
 
 Illumios will launch a live training program for small business owners who want to use AI to save time, reduce busywork, and operate more effectively without hiring more staff.
 
-This is the first paid learning product for Illumios and the current main offer across website, admin, and quiz.`,
+This is the first paid learning product for Illumios and the current main offer across website, admin, and quiz.
+
+Current launch posture:
+- website is shifting to a founding-cohort / priority-list front door
+- admin is live on Vercel as the internal operating dashboard
+- hub.illumios.com is the planned private participant portal
+- the immediate goal is to turn interest into a real Cohort 1 waitlist, then enrollment`,
   },
   {
     id: 's-target',

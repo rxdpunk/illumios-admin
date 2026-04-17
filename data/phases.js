@@ -1,97 +1,78 @@
 // 90-Day Launch Plan — Illumios Academia execution model
-// Last reviewed: 2026-04-15
+// Last reviewed: 2026-04-17
 // ✅ = confirmed done | 🔴 = blocked | 🟡 = in progress | ⚠️ = pending
 
 export const PHASES = [
   {
     name: 'Phase 1',
-    subtitle: 'Offer Launch & Alignment',
+    subtitle: 'Founding Cohort Launch Readiness',
     dates: 'Apr 14 – Apr 30',
     active: true,
     tasks: [
       'illumios.com live ✅',
-      'Google Workspace email live ✅',
-      'DKIM email authentication activated ✅',
+      'admin.illumios.com live on Vercel ✅',
       'AI Roadmap Quiz published ✅',
-      'Maya AI Voice Receptionist live ✅',
-      'GHL sub-account fully configured ✅',
-      'Align website, admin, and quiz around Illumios Academia ⚠️',
-      'Finalize offer promise, name, and founding-member price ⚠️',
-      'Choose the primary enrollment path for the first cohort ✅',
-      'Write the invitation / simple sales page copy ⚠️',
-      'Update cross-repo audience wording ⚠️',
-      'Align quiz to the main offer ⚠️',
-      'Lock the Hub Vercel conversion start trigger ⚠️',
-      'Wire website application → GHL contact capture ⚠️',
-      'Wire quiz completion → GHL contact capture ⚠️',
-      'Draft 4-session curriculum outline ⚠️',
-      'Start Hub foundation planning before participant delivery depends on it ⚠️',
-      'Test Maya end-to-end with live call ⚠️',
-      'GHL affiliate program signup ⚠️',
-      'File New Jersey LLC ⚠️',
+      'Website founding-cohort / priority-list flow implemented in code ✅',
+      'Create website GHL waitlist workflow + inbound webhook ⚠️',
+      'Add website Vercel env vars and deploy waitlist flow ⚠️',
+      'Decide GHL-only vs GHL + Supabase backup for website leads ⚠️',
+      'Convert Hub PRD into implementation plan ⚠️',
+      'Choose Zoom Webinar vs Google Meet pilot for Cohort 1 ⚠️',
+      'Set up admin tracking for leads, calls, enrollments, attendance, feedback, and testimonials ⚠️',
+      'Choose Prospecting Website Builder persistence + deployment target ⚠️',
+      'Recruit the first Illumios Academia cohort from the waitlist and warm network ⚠️',
     ],
-    notes: `Foundation is mostly complete. The priority now is alignment and packaging around Illumios Academia.
-The win for Phase 1 is a sellable offer: clear promise, clear price, clear 4-session outline, and a message you can send this week.
-Do not disappear into polishing. Package the program and move to outreach.`,
+    notes: `Phase 1 is now about operationalizing the polished pre-launch stack.
+Admin is already live. The highest-leverage move is to wire the website waitlist handoff, then move the Hub from PRD into implementation, then use the waitlist to drive first-cohort recruitment.`,
   },
   {
     name: 'Phase 2',
-    subtitle: 'Cohort Build & Recruitment',
-    dates: 'Apr 20 – May 4',
+    subtitle: 'Hub Foundation & Operator Systems',
+    dates: 'May 1 – May 21',
     active: false,
     tasks: [
-      'Build Session 1 outline and worksheet',
-      'Build Sessions 2–4 delivery materials',
-      'Create onboarding email and participant worksheet pack',
-      'Create simple enrollment and payment flow',
-      'Stand up Next.js starter for hub.illumios.com',
-      'Configure Vercel project and domain path for the Hub',
+      'Scaffold the first Hub app slice on Next.js + TypeScript + Supabase + Vercel',
+      'Configure Hub Vercel project and domain path for hub.illumios.com',
       'Configure Supabase project for the Hub',
-      'Invite first 5 warm prospects',
-      'Book 3 discovery calls for Academia prospects',
-      'Enroll first 4 paid participants',
+      'Define Hub route map, auth model, schema, and session unlock rules',
+      'Implement attendance confirmation and private question intake flows',
+      'Replace Prospecting Website Builder seeded data with real persistence',
+      'Define Facebook-first ingestion and AI qualification service interface',
+      'Add admin views for cohort attendance, feedback, and testimonial capture',
     ],
-    notes: `This phase turns the idea into something people can buy.
-Recruit from the warm network first: people who trust you, reply to you, and are likely to give good feedback.
-Sell the transformation, not the syllabus. The program is about one real business win in 30 days.`,
+    notes: `Phase 2 turns the Hub from a concept into a real product surface and turns internal operator tooling into something durable.
+Do not overbuild. Lock the first production-safe foundation before adding feature sprawl.`,
   },
   {
     name: 'Phase 3',
-    subtitle: 'Deliver First Cohort',
-    dates: 'May 5 – Jun 3',
+    subtitle: 'Deliver Cohort 1',
+    dates: 'May 22 – Jun 20',
     active: false,
     tasks: [
-      'Run first live cohort',
-      'Track attendance and collect participant questions',
-      'Ensure each participant identifies 3 AI use cases',
-      'Help each participant build 1 working workflow or process',
-      'Collect feedback survey from every participant',
-      'Capture 2 testimonials or case-study candidates',
-      'Offer next-step strategy session or Academia path after the cohort',
-      'Update curriculum based on real friction points',
+      'Run the first live Illumios Academia cohort',
+      'Track attendance, questions, and follow-up inside the operator stack',
+      'Publish replays, worksheets, and participant updates through the Hub',
+      'Collect participant feedback and identify friction points',
+      'Capture at least 2 testimonials or case-study candidates',
+      'Offer next-step enrollment, upsell, or follow-on support to strong participants',
     ],
-    notes: `Phase 3 is about proof, not polish.
-Your job is to get people a result, observe where they struggle, and turn that insight into a better product.
-If a participant asks for done-for-you help, log it as market feedback, not as your business model.`,
+    notes: `Phase 3 is about proof.
+Use live delivery to learn what participants actually need, then feed that back into the website, Hub, and admin surfaces.`,
   },
   {
     name: 'Phase 4',
-    subtitle: 'Refine & Scale',
-    dates: 'Jun 4 – Jul 4',
+    subtitle: 'Refine, Scale, and Systemize',
+    dates: 'Jun 21 – Jul 20',
     active: false,
     tasks: [
-      'Run second cohort or open Academia v1 enrollment',
-      'Publish first student case study or testimonial on the website',
-      'Commit to a public pricing menu',
-      'Codify talk → quiz/discovery → enrollment loop',
-      'Migrate illumios.com from GitHub Pages to Vercel',
-      'Place GHL affiliate inside the curriculum and track conversions',
-      'Create repeatable delivery SOP',
-      'Decide office hours or community support format',
-      'Review whether VA or admin support is needed',
+      'Run a second cohort or open the next enrollment window',
+      'Publish the first public case study or testimonial-driven website proof',
+      'Build live-data dashboard widgets after the GHL private integration key is set',
+      'Decide whether to migrate illumios.com from GitHub Pages to Vercel',
+      'Harden Prospecting Website Builder into a usable internal growth system',
+      'Create repeatable delivery, enrollment, and operator SOPs',
     ],
-    notes: `This phase turns the first cohort into a real engine.
-Use what worked to make the offer, curriculum, and enrollment flow more repeatable.
-By the end of Phase 4, Illumios should have a real product, proof from students, and a clearer path into Academia.`,
+    notes: `Phase 4 turns the first working stack into a repeatable machine.
+By the end of this phase, Illumios should have a proven cohort motion, a live member surface, and a clearer operator stack behind growth and delivery.`,
   },
 ];

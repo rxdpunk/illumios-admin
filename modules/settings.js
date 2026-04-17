@@ -98,19 +98,19 @@ export default {
           <div class="settings-roadmap">
             <div class="settings-roadmap-item">
               <span class="dot dot-green"></span>
-              <span><strong>Pass 1</strong> — Modular dashboard, Gridstack widgets, localStorage</span>
+              <span><strong>Pass 1</strong> — Static admin replica is live on Vercel at <code>admin.illumios.com</code></span>
             </div>
             <div class="settings-roadmap-item">
               <span class="dot dot-yellow"></span>
-              <span><strong>Pass 2</strong> — Stabilize enrollment flow, then stand up <code>hub.illumios.com</code> on Vercel + Supabase</span>
+              <span><strong>Pass 2</strong> — Wire the website founding-cohort waitlist handoff and deploy the polished live capture flow</span>
             </div>
             <div class="settings-roadmap-item">
               <span class="dot dot-muted"></span>
-              <span><strong>Pass 3</strong> — Migrate <code>illumios.com</code> to Vercel after the application → quiz → enrollment path is validated</span>
+              <span><strong>Pass 3</strong> — Move <code>hub.illumios.com</code> from PRD to implementation plan and scaffold</span>
             </div>
             <div class="settings-roadmap-item">
               <span class="dot dot-muted"></span>
-              <span><strong>Pass 4</strong> — Live GHL data widgets, Maya call log, pipeline snapshot, and shared-state improvements</span>
+              <span><strong>Pass 4</strong> — Add live ops widgets, Hub delivery tooling, and Prospecting Builder persistence</span>
             </div>
           </div>
         </div>
