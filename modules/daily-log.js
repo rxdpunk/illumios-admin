@@ -5,8 +5,8 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 const KEY = 'dailyLog/entries';
 const DAILY_LOG_SEED_VERSION_KEY = 'dailyLog/seed-version';
-const DAILY_LOG_SEED_VERSION = '2026-04-17-cross-project-v1';
-const DAILY_LOG_SEED_TEXT = `Cross-project status:
+const DAILY_LOG_SEED_VERSION = '2026-04-17-cross-project-v2';
+const PREVIOUS_DAILY_LOG_SEED_TEXT = `Cross-project status:
 - Admin: static replica is live on Vercel at admin.illumios.com.
 - Website: founding-cohort waitlist flow is implemented in code; blocker is the GHL webhook plus Vercel env vars before deploy.
 - Hub: PRD and stack direction are locked; next step is implementation plan then scaffold.
@@ -17,6 +17,18 @@ Highest-leverage next sequence:
 2. Add the Vercel env vars and deploy the website waitlist flow.
 3. Turn the Hub PRD into an implementation plan and scaffold the app.
 4. Decide the next persistence + deployment slice for Prospecting Website Builder.`;
+const DAILY_LOG_SEED_TEXT = `What shipped today:
+- Admin: kept the exact static dashboard, added the Vercel static path, and cut over admin.illumios.com.
+- Website: polished the public site, reframed it around a founding-cohort / priority-list launch, and changed the flow to collect first name + email instead of pushing people straight to the quiz.
+- Website backend: updated the lead-processing path so submissions can return a confirmation state, persist as waitlist leads, and send a waitlist-specific payload to GHL.
+- Hub: locked the direction around Illumios Academia Hub on hub.illumios.com with Next.js + TypeScript + Supabase + Vercel, and identified Zoom Webinar as the recommended MVP live layer.
+- Prospecting Website Builder: built the queue-first MVP prototype with prospect detail pages, seeded domain models, and reusable review components.
+
+What is still blocking the next move:
+1. Create the GHL waitlist workflow and capture the inbound webhook URL.
+2. Add the website Vercel env vars and deploy the waitlist flow live.
+3. Turn the Hub PRD into an implementation plan and scaffold the app.
+4. Decide the persistence, ingestion, and deployment slice for Prospecting Website Builder.`;
 
 function today()   { return new Date().toISOString().slice(0, 10); }
 function fmtShort(iso) {
@@ -36,7 +48,9 @@ async function seedEntriesIfNeeded(entries) {
   if (seededVersion === DAILY_LOG_SEED_VERSION) return entries;
 
   const seeded = { ...entries };
-  if (!seeded[today()]) seeded[today()] = DAILY_LOG_SEED_TEXT;
+  if (!seeded[today()] || seeded[today()] === PREVIOUS_DAILY_LOG_SEED_TEXT) {
+    seeded[today()] = DAILY_LOG_SEED_TEXT;
+  }
 
   await storage.set(KEY, seeded);
   await storage.set(DAILY_LOG_SEED_VERSION_KEY, DAILY_LOG_SEED_VERSION);

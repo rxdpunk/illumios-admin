@@ -6,14 +6,22 @@ const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const WEEKLY_SEED_VERSION_KEY = 'weekly/seed-version';
-const WEEKLY_SEED_VERSION = '2026-04-17-cross-project-v1';
-const CURRENT_WEEK_SEED = {
+const WEEKLY_SEED_VERSION = '2026-04-17-cross-project-v2';
+const PREVIOUS_CURRENT_WEEK_SEED = {
   priorities: [
     'Create the website GHL waitlist workflow, add Vercel env vars, and deploy the priority-list flow',
     'Turn the Hub PRD into an implementation plan, then scaffold the Next.js + Supabase starter',
     'Decide the Prospecting Website Builder persistence and deployment slice, then prep admin ops tracking'
   ],
   note: 'Admin is already live on Vercel. Keep the website focused on the founding-cohort waitlist handoff, move the Hub from PRD to implementation plan, and avoid re-architecting Prospecting Website Builder before persistence and ingestion decisions are locked.',
+};
+const CURRENT_WEEK_SEED = {
+  priorities: [
+    'Create the website GHL waitlist workflow, add the Vercel env vars, and deploy the live priority-list flow',
+    'Turn the Hub PRD into an implementation plan and confirm the Cohort 1 delivery layer',
+    'Set up admin ops tracking and choose the Prospecting Website Builder persistence + deployment path'
+  ],
+  note: 'Admin is already live on Vercel and the website waitlist flow is coded. This week should stay narrow: make the website handoff real, move the Hub from PRD to implementation planning, and avoid expanding Prospecting Website Builder before persistence, ingestion, and deployment decisions are explicit.',
 };
 
 function esc(s) {
@@ -76,14 +84,14 @@ async function seedCurrentWeekIfNeeded(monday, data) {
   const priorities = [...current.priorities];
 
   CURRENT_WEEK_SEED.priorities.forEach((item, index) => {
-    if (!priorities[index]) priorities[index] = item;
+    if (!priorities[index] || priorities[index] === PREVIOUS_CURRENT_WEEK_SEED.priorities[index]) {
+      priorities[index] = item;
+    }
   });
 
-  const note = current.note && current.note.includes('hub.illumios.com')
-    ? current.note
-    : current.note
-      ? `${current.note}\n\n${CURRENT_WEEK_SEED.note}`
-      : CURRENT_WEEK_SEED.note;
+  const note = !current.note || current.note === PREVIOUS_CURRENT_WEEK_SEED.note
+    ? CURRENT_WEEK_SEED.note
+    : current.note;
 
   data[firstDay] = {
     priorities,

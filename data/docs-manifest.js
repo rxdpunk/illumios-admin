@@ -5,8 +5,8 @@ export default [
     "group": "root",
     "type": "md",
     "path": "90-Day-Launch-Plan-v2.md",
-    "updatedAt": "2026-04-14T16:33:20.452Z",
-    "bytes": 7523
+    "updatedAt": "2026-04-17T19:20:28.198Z",
+    "bytes": 7578
   },
   {
     "title": "AGENTS",
@@ -41,6 +41,22 @@ export default [
     "bytes": 873
   },
   {
+    "title": "Daily Log 2026 04 16",
+    "group": "root",
+    "type": "md",
+    "path": "daily-log-2026-04-16.md",
+    "updatedAt": "2026-04-16T18:09:01.886Z",
+    "bytes": 1282
+  },
+  {
+    "title": "Daily Log 2026 04 17",
+    "group": "root",
+    "type": "md",
+    "path": "daily-log-2026-04-17.md",
+    "updatedAt": "2026-04-17T19:20:39.335Z",
+    "bytes": 2022
+  },
+  {
     "title": "Illumios Local Site Content Template",
     "group": "outputs",
     "type": "md",
@@ -73,20 +89,36 @@ export default [
     "bytes": 2570
   },
   {
+    "title": "Illumios Academia 101 Canonical Demo Pack",
+    "group": "planning",
+    "type": "md",
+    "path": "planning/illumios-academia-101-canonical-demo-pack.md",
+    "updatedAt": "2026-04-16T20:09:16.657Z",
+    "bytes": 10805
+  },
+  {
     "title": "Illumios Academia 101 Course Materials",
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-101-course-materials.md",
-    "updatedAt": "2026-04-14T18:58:52.466Z",
-    "bytes": 4133
+    "updatedAt": "2026-04-16T20:09:16.658Z",
+    "bytes": 8926
   },
   {
     "title": "Illumios Academia 101 Curriculum",
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-101-curriculum.md",
-    "updatedAt": "2026-04-14T18:59:11.239Z",
-    "bytes": 9916
+    "updatedAt": "2026-04-16T20:09:16.660Z",
+    "bytes": 12831
+  },
+  {
+    "title": "Illumios Academia 101 Dashboard Framework",
+    "group": "planning",
+    "type": "md",
+    "path": "planning/illumios-academia-101-dashboard-framework.md",
+    "updatedAt": "2026-04-16T20:06:47.968Z",
+    "bytes": 8776
   },
   {
     "title": "Illumios Academia 101 Normalization Index",
@@ -101,8 +133,8 @@ export default [
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-101-prd.md",
-    "updatedAt": "2026-04-14T18:49:27.209Z",
-    "bytes": 8941
+    "updatedAt": "2026-04-16T20:09:16.660Z",
+    "bytes": 13441
   },
   {
     "title": "Illumios Academia 101 Session 1",
@@ -143,6 +175,22 @@ export default [
     "path": "planning/illumios-academia-101-slide-outline.md",
     "updatedAt": "2026-04-14T19:22:08.285Z",
     "bytes": 8725
+  },
+  {
+    "title": "Illumios Academia 101 Student Dashboard Handoff",
+    "group": "planning",
+    "type": "md",
+    "path": "planning/illumios-academia-101-student-dashboard-handoff.md",
+    "updatedAt": "2026-04-16T20:13:48.535Z",
+    "bytes": 6045
+  },
+  {
+    "title": "Illumios Academia 101 Student Dashboard Implementation Path",
+    "group": "planning",
+    "type": "md",
+    "path": "planning/illumios-academia-101-student-dashboard-implementation-path.md",
+    "updatedAt": "2026-04-16T20:09:30.507Z",
+    "bytes": 6137
   },
   {
     "title": "Illumios Academia 102 Course Materials",
@@ -581,8 +629,8 @@ export default [
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-session-1-facilitator-notes.md",
-    "updatedAt": "2026-04-14T16:33:20.455Z",
-    "bytes": 9225
+    "updatedAt": "2026-04-16T20:09:16.658Z",
+    "bytes": 10100
   },
   {
     "title": "Illumios Academia Session 1 Facilitator Notes",
@@ -613,8 +661,8 @@ export default [
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-session-2-facilitator-notes.md",
-    "updatedAt": "2026-04-14T17:55:37.196Z",
-    "bytes": 8697
+    "updatedAt": "2026-04-16T20:09:16.659Z",
+    "bytes": 9461
   },
   {
     "title": "Illumios Academia Session 2 Worksheet",
@@ -629,8 +677,8 @@ export default [
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-session-3-facilitator-notes.md",
-    "updatedAt": "2026-04-14T17:55:37.196Z",
-    "bytes": 7475
+    "updatedAt": "2026-04-16T20:09:16.659Z",
+    "bytes": 8251
   },
   {
     "title": "Illumios Academia Session 3 Worksheet",
@@ -645,24 +693,24 @@ export default [
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-session-4-facilitator-notes.md",
-    "updatedAt": "2026-04-14T17:55:37.197Z",
-    "bytes": 6824
+    "updatedAt": "2026-04-16T20:09:16.660Z",
+    "bytes": 7697
   },
   {
     "title": "Illumios Academia Session 4 Worksheet",
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-academia-session-4-worksheet.md",
-    "updatedAt": "2026-04-14T17:55:37.197Z",
-    "bytes": 2564
+    "updatedAt": "2026-04-16T19:07:21.336Z",
+    "bytes": 2710
   },
   {
     "title": "Illumios Github Pages To Vercel Switch",
     "group": "planning",
     "type": "md",
     "path": "planning/illumios-github-pages-to-vercel-switch.md",
-    "updatedAt": "2026-04-15T14:06:29.388Z",
-    "bytes": 7928
+    "updatedAt": "2026-04-17T13:16:52.681Z",
+    "bytes": 13282
   },
   {
     "title": "Illumios LLC Board Memo 2026 04 14",
@@ -709,7 +757,7 @@ export default [
     "group": "root",
     "type": "md",
     "path": "TASKS.md",
-    "updatedAt": "2026-04-15T13:33:17.147Z",
-    "bytes": 6114
+    "updatedAt": "2026-04-17T19:19:47.853Z",
+    "bytes": 6862
   }
 ];

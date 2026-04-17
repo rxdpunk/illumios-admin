@@ -31,15 +31,15 @@ function buildStatusBar() {
   const daysLeft  = Math.max(0, Math.ceil((offerLaunchEnd - today) / 86400000));
 
   const items = [
-    { label: 'Website',   dot: 'green',  val: 'Offer-first' },
-    { label: 'Admin',     dot: 'green',  val: 'Tracking Academia' },
-    { label: 'Quiz',      dot: 'yellow', val: 'Need Routing Pass' },
-    { label: 'Maya AI',   dot: 'yellow', val: 'Need Offer Prompt Pass' },
-    { label: 'NJ LLC',    dot: 'yellow', val: 'Pending' },
+    { label: 'Website',   dot: 'green',  val: 'Waitlist code ready' },
+    { label: 'Admin',     dot: 'green',  val: 'Live on Vercel' },
+    { label: 'Quiz',      dot: 'yellow', val: 'Needs GHL handoff' },
+    { label: 'Hub',       dot: 'yellow', val: 'Plan next' },
+    { label: 'Builder',   dot: 'yellow', val: 'MVP seeded' },
     {
-      label: 'Offer Launch',
+      label: 'Cohort 1',
       dot: daysLeft > 0 ? 'orange' : 'red',
-      val: daysLeft > 0 ? `${daysLeft}d left` : 'Complete',
+      val: daysLeft > 0 ? `${daysLeft}d left` : 'Launch window',
     },
   ];
 
