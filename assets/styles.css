@@ -1359,6 +1359,43 @@ body::before {
 
 .log-date-label { font-family: var(--font-brand); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); }
 
+.log-task-rollup {
+  margin: 18px 22px 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(242,101,34,.18);
+  border-radius: 12px;
+  background: rgba(242,101,34,.08);
+}
+
+.log-task-rollup-compact {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.log-task-rollup-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+
+.log-task-rollup-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.log-task-rollup-list li {
+  color: var(--cream);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
 .log-full-textarea {
   width: 100%; background: transparent; border: none;
   color: var(--cream); font-family: var(--font-ui);

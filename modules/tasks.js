@@ -1,6 +1,10 @@
 // Tasks module — full task manager with buckets, notes, and priority tags.
 // Stored in localStorage under mc:tasks/list
 import { storage } from '../core/storage.js';
+import {
+  addCompletedTaskToDailyLog,
+  removeCompletedTaskFromDailyLog,
+} from '../core/daily-log.js';
 
 const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`;
 
@@ -389,7 +393,13 @@ async function renderTodayWidget(el) {
     checkbox.addEventListener('change', async () => {
       const all = await load();
       const found = all.find(t => t.id === checkbox.dataset.id);
-      if (found) { found.done = true; found.bucket = 'Done'; await save(all); }
+      if (found) {
+        found.done = true;
+        found.previousBucket = found.bucket === 'Done' ? (found.previousBucket || 'Today') : found.bucket;
+        found.bucket = 'Done';
+        await addCompletedTaskToDailyLog(found);
+        await save(all);
+      }
       renderTodayWidget(el);
     });
   });
@@ -460,8 +470,19 @@ export default {
       el.querySelectorAll('.task-cb').forEach(cb => {
         cb.addEventListener('change', async () => {
           const idx = Number(cb.dataset.idx);
-          tasks[idx].done = cb.checked;
-          tasks[idx].bucket = cb.checked ? 'Done' : tasks[idx].bucket;
+          const task = tasks[idx];
+          const wasDone = task.done;
+
+          task.done = cb.checked;
+          if (cb.checked) {
+            task.previousBucket = task.bucket === 'Done' ? (task.previousBucket || 'Today') : task.bucket;
+            task.bucket = 'Done';
+            await addCompletedTaskToDailyLog(task);
+          } else {
+            task.bucket = task.previousBucket || 'Today';
+            delete task.previousBucket;
+            if (wasDone) await removeCompletedTaskFromDailyLog(task.id);
+          }
           await save(tasks);
           render();
         });
@@ -482,6 +503,7 @@ export default {
           const idx = Number(btn.dataset.idx);
           const ta = el.querySelector(`.task-note-ta[data-idx="${idx}"]`);
           if (ta) tasks[idx].note = ta.value.trim();
+          if (tasks[idx].done) await addCompletedTaskToDailyLog(tasks[idx]);
           await save(tasks);
           render();
         });
@@ -500,6 +522,7 @@ export default {
       el.querySelectorAll('.task-delete-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
           const idx = Number(btn.dataset.idx);
+          await removeCompletedTaskFromDailyLog(tasks[idx]?.id);
           tasks.splice(idx, 1);
           await save(tasks);
           render();

@@ -1,9 +1,15 @@
 // Daily Log module — clean split-panel editor with history sidebar.
 import { storage } from '../core/storage.js';
+import {
+  DAILY_LOG_KEY as KEY,
+  DAILY_LOG_ROLLUPS_CHANGED_EVENT,
+  getTaskRollups,
+  getTaskRollupsByDay,
+  todayIso,
+} from '../core/daily-log.js';
 
 const ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
 
-const KEY = 'dailyLog/entries';
 const DAILY_LOG_SEED_VERSION_KEY = 'dailyLog/seed-version';
 const DAILY_LOG_SEED_VERSION = '2026-04-17-cross-project-v2';
 const PREVIOUS_DAILY_LOG_SEED_TEXT = `Cross-project status:
@@ -30,7 +36,7 @@ What is still blocking the next move:
 3. Turn the Hub PRD into an implementation plan and scaffold the app.
 4. Decide the persistence, ingestion, and deployment slice for Prospecting Website Builder.`;
 
-function today()   { return new Date().toISOString().slice(0, 10); }
+function today() { return todayIso(); }
 function fmtShort(iso) {
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -40,7 +46,44 @@ function fmtFull(iso) {
   return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 }
 function esc(s) {
-  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function taskRollupMarkup(items) {
+  if (!items.length) return '';
+  return `
+    <div class="log-task-rollup-title">Completed from task board</div>
+    <ul class="log-task-rollup-list">
+      ${items.map(item => `<li>${esc(item.summary)}</li>`).join('')}
+    </ul>`;
+}
+
+function shortPreview(text) {
+  const clean = String(text || '').trim();
+  if (!clean) return 'No entry yet';
+  return clean.length > 40 ? clean.slice(0, 40) + '…' : clean;
+}
+
+function previewTextForDay(entries, rollupsByDay, day) {
+  const manual = String(entries[day] || '').trim();
+  if (manual) return shortPreview(manual);
+  const auto = rollupsByDay?.[day]?.[0]?.summary || '';
+  return shortPreview(auto);
+}
+
+async function paintTaskRollupSection(section, date, compact = false) {
+  if (!section) return;
+  const items = await getTaskRollups(date);
+
+  if (!items.length) {
+    section.hidden = true;
+    section.innerHTML = '';
+    return;
+  }
+
+  section.hidden = false;
+  section.className = compact ? 'log-task-rollup log-task-rollup-compact' : 'log-task-rollup';
+  section.innerHTML = taskRollupMarkup(items);
 }
 
 async function seedEntriesIfNeeded(entries) {
@@ -60,7 +103,6 @@ async function seedEntriesIfNeeded(entries) {
 async function getEntries() {
   const modern = await storage.get(KEY, null);
   if (modern) return seedEntriesIfNeeded(modern);
-  // Back-compat: try legacy key
   const legacy = storage.legacyGet('mc_logs', null);
   return seedEntriesIfNeeded(legacy || {});
 }
@@ -73,7 +115,6 @@ export default {
   icon: ICON,
   showInSidebar: true,
 
-  // ── Widget for Home ──────────────────────────────────────
   widgets: [{
     id: 'daily-log-today',
     title: "Today's Log",
@@ -84,7 +125,6 @@ export default {
       const outer = document.createElement('div');
       outer.style.cssText = 'display:flex;flex-direction:column;height:100%;gap:8px;padding:4px 0';
 
-      // Header row: date + autosave status
       const headerRow = document.createElement('div');
       headerRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;flex-shrink:0';
       const dateLbl = document.createElement('div');
@@ -95,7 +135,9 @@ export default {
       savedLbl.textContent = '✓ Saved';
       headerRow.append(dateLbl, savedLbl);
 
-      // Inline textarea
+      const taskRollup = document.createElement('div');
+      await paintTaskRollupSection(taskRollup, today(), true);
+
       const ta = document.createElement('textarea');
       ta.style.cssText = [
         'flex:1;min-height:0;background:transparent',
@@ -107,7 +149,7 @@ export default {
       ta.placeholder = 'What did you work on today?';
       ta.value = text;
       ta.addEventListener('focus', () => { ta.style.borderColor = 'var(--orange)'; });
-      ta.addEventListener('blur',  () => { ta.style.borderColor = 'var(--border)'; });
+      ta.addEventListener('blur', () => { ta.style.borderColor = 'var(--border)'; });
 
       let widgetTimer = null;
       ta.addEventListener('input', () => {
@@ -121,7 +163,6 @@ export default {
         }, 1000);
       });
 
-      // Footer: Full Log link
       const footer = document.createElement('div');
       footer.style.cssText = 'display:flex;justify-content:flex-end;flex-shrink:0';
       const link = document.createElement('a');
@@ -130,27 +171,37 @@ export default {
       link.textContent = 'Full Log →';
       footer.appendChild(link);
 
-      outer.append(headerRow, ta, footer);
+      if (el._dailyLogRollupListener) {
+        document.removeEventListener(DAILY_LOG_ROLLUPS_CHANGED_EVENT, el._dailyLogRollupListener);
+      }
+      el._dailyLogRollupListener = async (event) => {
+        if (event?.detail?.date && event.detail.date !== today()) return;
+        await paintTaskRollupSection(taskRollup, today(), true);
+      };
+      document.addEventListener(DAILY_LOG_ROLLUPS_CHANGED_EVENT, el._dailyLogRollupListener);
+
+      outer.append(headerRow, taskRollup, ta, footer);
       el.textContent = '';
       el.appendChild(outer);
     },
   }],
 
-  // ── Full view ────────────────────────────────────────────
   async mount(el) {
-    let entries   = await getEntries();
+    let entries = await getEntries();
     let activeDay = today();
 
-    const allDays = () => Object.keys(entries).sort().reverse();
-
-    const render = () => {
-      const days = allDays();
+    const render = async () => {
+      const rollupsByDay = await getTaskRollupsByDay();
+      const days = Array.from(new Set([
+        ...Object.keys(entries),
+        ...Object.keys(rollupsByDay),
+      ])).sort().reverse();
       const currentText = entries[activeDay] || '';
+      const taskRollups = rollupsByDay[activeDay] || await getTaskRollups(activeDay);
 
       el.innerHTML = `
         <div class="daily-log-layout">
 
-          <!-- Editor panel -->
           <div class="log-editor-card">
             <div class="log-editor-header">
               <div class="log-date-label">${fmtFull(activeDay)}</div>
@@ -158,6 +209,9 @@ export default {
                 <span class="log-autosave" id="log-status"></span>
                 <button class="btn-sm btn-primary" id="log-save-btn">Save</button>
               </div>
+            </div>
+            <div class="log-task-rollup" id="log-task-rollup" ${taskRollups.length ? '' : 'hidden'}>
+              ${taskRollupMarkup(taskRollups)}
             </div>
             <textarea
               class="log-full-textarea"
@@ -171,17 +225,16 @@ export default {
             </div>
           </div>
 
-          <!-- History sidebar -->
           <div class="log-history-panel">
             <div class="log-history-header">Past Entries</div>
             <button class="log-new-day-btn ${activeDay === today() ? 'active' : ''}" data-day="${today()}" id="log-today-btn">
               <span class="log-history-day">Today</span>
-              <span class="log-history-preview">${entries[today()] ? esc(entries[today()].slice(0,40)) + '…' : 'No entry yet'}</span>
+              <span class="log-history-preview">${esc(previewTextForDay(entries, rollupsByDay, today()))}</span>
             </button>
             ${days.filter(d => d !== today()).map(d => `
               <button class="log-new-day-btn ${activeDay === d ? 'active' : ''}" data-day="${d}">
                 <span class="log-history-day">${fmtShort(d)}</span>
-                <span class="log-history-preview">${esc((entries[d] || '').slice(0, 40))}…</span>
+                <span class="log-history-preview">${esc(previewTextForDay(entries, rollupsByDay, d))}</span>
               </button>`).join('')}
             ${days.length === 0 ? '<p class="log-empty-history">Start writing — your entries will appear here.</p>' : ''}
           </div>
@@ -192,10 +245,10 @@ export default {
     };
 
     const bindEvents = () => {
-      const ta        = document.getElementById('log-ta');
-      const statusEl  = document.getElementById('log-status');
-      const countEl   = document.getElementById('log-char-count');
-      const saveBtn   = document.getElementById('log-save-btn');
+      const ta = document.getElementById('log-ta');
+      const statusEl = document.getElementById('log-status');
+      const countEl = document.getElementById('log-char-count');
+      const saveBtn = document.getElementById('log-save-btn');
 
       const doSave = async (silent = false) => {
         entries = await getEntries();
@@ -208,11 +261,14 @@ export default {
           statusEl.textContent = 'Autosaved';
           setTimeout(() => { statusEl.textContent = ''; }, 1500);
         }
-        // Update sidebar preview for today
+
         const todayBtn = document.getElementById('log-today-btn');
         if (todayBtn && activeDay === today()) {
           const preview = todayBtn.querySelector('.log-history-preview');
-          if (preview) preview.textContent = ta.value ? ta.value.slice(0, 40) + '…' : 'No entry yet';
+          if (preview) {
+            const rollupsByDay = await getTaskRollupsByDay();
+            preview.textContent = previewTextForDay(entries, rollupsByDay, today());
+          }
         }
       };
 
@@ -231,21 +287,28 @@ export default {
 
       saveBtn.addEventListener('click', () => doSave(false));
 
-      // Sidebar day switching
       el.querySelectorAll('.log-new-day-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-          // Save current before switching
           entries = await getEntries();
           entries[activeDay] = ta.value;
           await storage.set(KEY, entries);
 
           activeDay = btn.dataset.day;
           entries = await getEntries();
-          render();
+          await render();
         });
       });
     };
 
-    render();
+    if (el._dailyLogRollupListener) {
+      document.removeEventListener(DAILY_LOG_ROLLUPS_CHANGED_EVENT, el._dailyLogRollupListener);
+    }
+    el._dailyLogRollupListener = async (event) => {
+      if (event?.detail?.date && event.detail.date !== activeDay) return;
+      await paintTaskRollupSection(document.getElementById('log-task-rollup'), activeDay, false);
+    };
+    document.addEventListener(DAILY_LOG_ROLLUPS_CHANGED_EVENT, el._dailyLogRollupListener);
+
+    await render();
   },
 };
